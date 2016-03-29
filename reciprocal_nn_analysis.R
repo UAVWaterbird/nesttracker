@@ -1,12 +1,5 @@
 ### R script for nearest neighbor analysis using spatstat
 
-
-#B North colony working directory
-setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\SPATSTAT_Analysis\\Bnorth")
-#B South colony working directory
-setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\SPATSTAT_Analysis\\Bsouth")
-# C colony working directory
-setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\SPATSTAT_Analysis\\C")
 library(spatstat)
 library(rgeos)
 library(sp)
@@ -14,8 +7,8 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn=".", layer="AWPE_F4_300_C")
-b <- readOGR(dsn=".", layer="AWPE_F3_400_C")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_Bsouth")
+b <- readOGR(dsn="./TestData", layer="AWPE_F3_400_Bsouth")
 
 pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[2,1]), 
                                    yrange=c(a@bbox[1,2], a@bbox[2,2])))
@@ -73,15 +66,17 @@ NoNest
 ActiveNest<-subset(a, Nesting==1)
 #ActiveNest # remove the "#" to see the list of birds classified as nesting
 
+boxplot(a$dist ~ a$Nesting)
+
 ###Accuracy Assessment for Multitemporal Nearest Neighbor ###
 
 # Add observed values
-obs<- read.csv("Observed_Values.csv")
-obs<-obs[ which(obs$Flight=="F4"), ]        #### CHANGE FLIGHT NUMBER HERE
+obs<- read.csv("TestData/Observed_Values.csv")
+obs<-obs[ which(obs$Flight=="F4"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
 head(a)  ## this names the column "observed.observed" , need to figure out why is adding the ".observed"
-write.csv(a, "F4F3.csv")                   #### CHANGE FILE NAME
+#write.csv(a, "F4F3.csv")                   #### CHANGE FILE NAME
 
 ### Here is where I want to create a shapefile of only birds that I think are actively nesting 
 ### e.g., writeOGR(a, "BSouthnest1", driver="ESRI shapefile")
