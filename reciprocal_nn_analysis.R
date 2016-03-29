@@ -1,5 +1,7 @@
 ### R script for nearest neighbor analysis using spatstat
 
+# testing a change on the client side
+
 library(spatstat)
 library(rgeos)
 library(sp)
