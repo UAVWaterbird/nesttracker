@@ -27,12 +27,13 @@ pointsnn <- nncross(pointsa, pointsb)
 a$dist <- pointsnn$dist
 a$nnid <- b@data[pointsnn$which,3]                              ### be careful here! Make sure you have the correct column
 head(a) 
-
+a$nnid <- as.character(a$nnid)
 
 #Now go from flight b to flight a 
 pointsnnba <- nncross(pointsb, pointsa)
 b$dist <- pointsnnba$dist
 b$nnid <- a@data[pointsnnba$which,3]
+b$nnid <- as.character(b$nnid)
 head(b) 
 
 
@@ -40,7 +41,8 @@ head(b)
 pointsnnac <- nncross(pointsa, pointsc)
 ac<-a
 ac$dist <- pointsnnac$dist
-ac$nnid <- c@data[pointsnnac$which,3]                             
+ac$nnid <- c@data[pointsnnac$which,3] 
+ac$nnid <- as.character(ac$nnid)
 head(ac) 
 
 #from flight c to flight a 
@@ -48,6 +50,7 @@ pointsnnca <- nncross(pointsc, pointsa)
 ca<-c
 ca$dist <- pointsnnca$dist
 ca$nnid <- a@data[pointsnnca$which,3]                             
+ca$nnid <- as.character(ca$nnid)
 head(ca)
 
 #from flight b to flight c
@@ -55,6 +58,7 @@ pointsnnbc <- nncross(pointsb, pointsc)
 bc<-b
 bc$dist <- pointsnnbc$dist
 bc$nnid <- c@data[pointsnnbc$which,3]
+bc$nnid <- as.character(bc$nnid)
 head(bc) 
 
 #from flight c to flight b 
@@ -62,6 +66,7 @@ pointsnncb <- nncross(pointsc, pointsb)
 cb<-c
 cb$dist <- pointsnncb$dist
 cb$nnid <- b@data[pointsnncb$which,3]                             
+cb$nnid <- as.character(cb$nnid)
 head(cb)
 
 nesting_birds <- 0
@@ -72,21 +77,18 @@ for(i in 1:nrow(a)){
   cur_bird <- a[i,]
   
   # identify its nearest neighbor in flight b
-  nn_a_b_bird <- as.list(cur_bird$nnid)
-  nn_a_c_bird <- as.list(ac$nnid) 
+  nn_a_b_bird <- cur_bird$nnid
+  nn_a_c_bird <- ac$nnid[ac$UFID==cur_bird$UFID] 
   
+  nn_b_a_bird <- b$nnid[b$UFID==nn_a_b_bird]
+  nn_b_c_bird <- bc$nnid[bc$UFID==nn_a_b_bird]
 
-  nn_b_a_bird <- as.list(b$nnid)
-  nn_b_c_bird <- as.list(bc$nnid)
-  
-  
-  nn_c_a_bird <- as.list(ca$nnid)
-  nn_c_b_bird <- as.list(cb$nnid)
+  nn_c_a_bird <- ca$nnid[ca$UFID==nn_a_c_bird]
+  nn_c_b_bird <- cb$nnid[cb$UFID==nn_b_c_bird]
   
   # if ITS nearest neighbor is point from flight a, add 1 to our count of nesting birds
   if(nn_a_b_bird == nn_c_b_bird && nn_a_c_bird == nn_b_c_bird && nn_b_a_bird == nn_c_a_bird 
-     && nn_b_a_bird == cur_bird$UFID[1] && nn_c_a_bird == cur_bird$UFID[1]
-     && nn_b_c_bird == c_bird$UFID[1] && nn_c_b_bird == b_bird$UFID[1]){
+     && nn_b_a_bird == cur_bird$UFID && nn_c_a_bird == cur_bird$UFID){
     nesting_birds <- nesting_birds + 1
     
   } else {
