@@ -64,32 +64,34 @@ cb$dist <- pointsnncb$dist
 cb$nnid <- b@data[pointsnncb$which,3]                             
 head(cb)
 
-for(i in 1:length(unique_pts_a)){
+nesting_birds <- 0
+non.nesters <- NULL
+
+for(i in 1:nrow(a)){
   # take a point from flight a
-  cur_bird <- flight_a_data[flight_a_data$Point_ID==unique_pts_a[i],]
+  cur_bird <- a[i,]
   
   # identify its nearest neighbor in flight b
-  nn_a_b_bird <- cur_bird[cur_bird$Flight_To == flight_b,]$NN_Pt_ID
-  nn_a_c_bird <- cur_bird[cur_bird$Flight_To == flight_c,]$NN_Pt_ID
+  nn_a_b_bird <- as.list(cur_bird$nnid)
+  nn_a_c_bird <- as.list(ac$nnid) 
   
-  b_bird <- flight_b_data[flight_b_data$Point_ID==nn_a_b_bird,]
-  nn_b_a_bird <- b_bird[b_bird$Flight_To == flight_a,]$NN_Pt_ID
-  nn_b_c_bird <- b_bird[b_bird$Flight_To == flight_c,]$NN_Pt_ID
+
+  nn_b_a_bird <- as.list(b$nnid)
+  nn_b_c_bird <- as.list(bc$nnid)
   
-  c_bird <- flight_c_data[flight_c_data$Point_ID==nn_a_c_bird,]
-  nn_c_a_bird <- c_bird[c_bird$Flight_To == flight_a,]$NN_Pt_ID
-  nn_c_b_bird <- c_bird[c_bird$Flight_To == flight_b,]$NN_Pt_ID
+  
+  nn_c_a_bird <- as.list(ca$nnid)
+  nn_c_b_bird <- as.list(cb$nnid)
   
   # if ITS nearest neighbor is point from flight a, add 1 to our count of nesting birds
   if(nn_a_b_bird == nn_c_b_bird && nn_a_c_bird == nn_b_c_bird && nn_b_a_bird == nn_c_a_bird 
-     && nn_b_a_bird == cur_bird$Point_ID[1] && nn_c_a_bird == cur_bird$Point_ID[1]
-     && nn_b_c_bird == c_bird$Point_ID[1] && nn_c_b_bird == b_bird$Point_ID[1]){
+     && nn_b_a_bird == cur_bird$UFID[1] && nn_c_a_bird == cur_bird$UFID[1]
+     && nn_b_c_bird == c_bird$UFID[1] && nn_c_b_bird == b_bird$UFID[1]){
     nesting_birds <- nesting_birds + 1
-    #     flight_from_data$Nesting[i] <- 1
+    
   } else {
     non.nesters <- c(non.nesters, i)
   }
-  
 }
 #############################################################################################
 ############ Original script #####################
