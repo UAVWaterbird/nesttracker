@@ -86,15 +86,24 @@ for(i in 1:nrow(a)){
   nn_c_a_bird <- ca$nnid[ca$UFID==nn_a_c_bird]
   nn_c_b_bird <- cb$nnid[cb$UFID==nn_b_c_bird]
   
-  # if ITS nearest neighbor is point from flight a, add 1 to our count of nesting birds
+  # if a's nn in b is same as c's nn in b
+  # and a's nn in c is same as b's nn in c
+  # and b's nn in a is same as c's nn in a
+  # and b's nn in a is same as a's nn in b
+  # and c's nn in a is same as a's nn in c
+
   if(nn_a_b_bird == nn_c_b_bird && nn_a_c_bird == nn_b_c_bird && nn_b_a_bird == nn_c_a_bird 
      && nn_b_a_bird == cur_bird$UFID && nn_c_a_bird == cur_bird$UFID){
+    # add one to count of nesting birds  
     nesting_birds <- nesting_birds + 1
     
   } else {
+    # if not, record the ID of the non-nesting bird from flight a
     non.nesters <- c(non.nesters, i)
   }
 }
+
+
 #############################################################################################
 ############ Original script #####################
 
