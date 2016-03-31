@@ -95,74 +95,18 @@ for(i in 1:nrow(a)){
   if(nn_a_b_bird == nn_c_b_bird && nn_a_c_bird == nn_b_c_bird && nn_b_a_bird == nn_c_a_bird 
      && nn_b_a_bird == cur_bird$UFID && nn_c_a_bird == cur_bird$UFID){
     # add one to count of nesting birds  
-    nesting_birds <- nesting_birds + 1
+    #nesting_birds <- nesting_birds + 1
+    a$Nesting[i]<- 1
     
   } else {
     # if not, record the ID of the non-nesting bird from flight a
-    non.nesters <- c(non.nesters, i)
+    #non.nesters <- c(non.nesters, i)
+    a$Nesting[i] <- 0
   }
 }
 
+sum(a$Nesting) #How many birds did it classify as nesting 
+boxplot(a$dist ~ a$Nesting)
 
-#############################################################################################
-############ Original script #####################
+write.csv(a, "f1f3f4_nestpoints.csv")
 
-setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\GME_Analysis\\Anaho_USGSRTK_Processed\\HolyGrailRCode\\Bnorth_Colony")
-my.data <- read.csv("NN_Analysis_Bnorth.csv")
-
-my.data$Flight_from <- as.character(my.data$Flight_from)
-my.data$Flight_To <- as.character(my.data$Flight_To)
-
-flight_a <- "F3"
-flight_b <- "F1"
-flight_c <- "F4"
-
-#working_data <- my.data[my.data$Flight_from != flight_c,]
-#working_data <- working_data[working_data$Flight_To != flight_c,]
-
-flight_a_data <- my.data[my.data$Flight_from == flight_a,]
-
-flight_b_data <- my.data[my.data$Flight_from == flight_b,]
-
-flight_c_data <- my.data[my.data$Flight_from == flight_c,]
-
-# Calculate number of nesting birds based on reciprocal nearest neighbors:
-
-nesting_birds <- 0
-non.nesters <- NULL
-
-unique_pts_a <- unique(flight_a_data$Point_ID)
-
-for(i in 1:length(unique_pts_a)){
-  # take a point from flight a
-  cur_bird <- flight_a_data[flight_a_data$Point_ID==unique_pts_a[i],]
-  
-  # identify its nearest neighbor in flight b
-  nn_a_b_bird <- cur_bird[cur_bird$Flight_To == flight_b,]$NN_Pt_ID
-  nn_a_c_bird <- cur_bird[cur_bird$Flight_To == flight_c,]$NN_Pt_ID
-  
-  b_bird <- flight_b_data[flight_b_data$Point_ID==nn_a_b_bird,]
-  nn_b_a_bird <- b_bird[b_bird$Flight_To == flight_a,]$NN_Pt_ID
-  nn_b_c_bird <- b_bird[b_bird$Flight_To == flight_c,]$NN_Pt_ID
-  
-  c_bird <- flight_c_data[flight_c_data$Point_ID==nn_a_c_bird,]
-  nn_c_a_bird <- c_bird[c_bird$Flight_To == flight_a,]$NN_Pt_ID
-  nn_c_b_bird <- c_bird[c_bird$Flight_To == flight_b,]$NN_Pt_ID
-  
-  # if ITS nearest neighbor is point from flight a, add 1 to our count of nesting birds
-  if(nn_a_b_bird == nn_c_b_bird && nn_a_c_bird == nn_b_c_bird && nn_b_a_bird == nn_c_a_bird 
-     && nn_b_a_bird == cur_bird$Point_ID[1] && nn_c_a_bird == cur_bird$Point_ID[1]
-     && nn_b_c_bird == c_bird$Point_ID[1] && nn_c_b_bird == b_bird$Point_ID[1]){
-    nesting_birds <- nesting_birds + 1
-    #     flight_from_data$Nesting[i] <- 1
-  } else {
-    non.nesters <- c(non.nesters, i)
-  }
-  
-}
-flight_a_data[non.nesters,]
-flight_b_data[non.nesters,]
-flight_c_data[non.nesters,] #I'm not really sure if this is bringing up the correct points
-
-hist(flight_a_data[non.nesters,]$NN)
-nesting_birds
