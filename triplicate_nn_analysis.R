@@ -110,3 +110,40 @@ boxplot(a$dist ~ a$Nesting)
 
 write.csv(a, "f1f3f4_nestpoints.csv")
 
+
+
+##################################################
+#####Accuracy Assessment 
+# Add observed values
+obs<- read.csv("TestData/Observed_Values_Bsouth.csv")   ### MAKE SURE YOU ARE PULLING THE CORRECT FILE
+obs<-obs[ which(obs$Flight=="F1"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
+obsvalue<-obs$Observed
+a$observed<-obsvalue
+head(a)
+
+
+#calculate Kappa, sensitivity, specificty, auc
+
+f<- as.data.frame(a)  #create a dataframe that can be used by package Presence Absence 
+
+f<-data.frame(f$UFID, f$observed, f$Nesting)
+
+cmx<-cmx(f, which.model=1)
+kappa<-Kappa(cmx)
+sensitivity<-sensitivity(cmx)
+specificity<-specificity(cmx)
+auc<-auc(f)
+
+### REMEMBER TO CHANGE FIGURE FILE NAMES
+png("F1F3f4summary.png") ##Get ready to export the presence.absence.summary figure
+presence.absence.summary(f)
+dev.off() #Export the latest figure
+png("F1F3F4ROC.png")
+auc.roc.plot(f)
+dev.off()
+
+Resultsf1f3f4bs<-data.frame(kappa, sensitivity, specificity, auc, colony="bsouth", flight="f1f3f4", stringsAsFactors =FALSE )
+#ResultsAll<-rbind
+ResultsAll<-Resultsf1f3f4bs
+ResultsAll
+write.csv(ResultsAll, "TriplicateAccuracyResults.csv")
