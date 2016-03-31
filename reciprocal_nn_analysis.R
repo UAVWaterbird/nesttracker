@@ -109,3 +109,5 @@ ResultsAll
 # to delete a row = e.g., ResultsAll<-ResultsAll[-c(2, 4, 6), ]
 #to export results
 write.csv(ResultsAll,"C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\SPATSTAT_Analysis\\RecipResults.csv")
+
+
