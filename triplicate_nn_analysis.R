@@ -157,9 +157,9 @@ write.csv(ResultsAlltrip, "TriplicateAccuracyResults.csv")
 
 # Create spatial points data frames from flight 1, flight 3, and flight 4 shapefiles
 
-a <- readOGR(dsn="./TestData", layer="AWPE_F1_400_Bnorth")
-b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_Bnorth")
-c <- readOGR(dsn="./TestData", layer="AWPE_F3_400_Bnorth")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_Bnorth")
+b <- readOGR(dsn="./TestData", layer="AWPE_F3_400_Bnorth")
+c <- readOGR(dsn="./TestData", layer="AWPE_F1_400_Bnorth")
 
 # create spatial point pattern using as.ppp function in Spatstat
 pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[2,1]), 
@@ -255,9 +255,12 @@ for(i in 1:nrow(a)){
 }
 
 sum(a$Nesting) #How many birds did it classify as nesting 
-boxplot(a$dist ~ a$Nesting) ### export as a figure after some clean up? 
 
-write.csv(a, "f1f4f3_nestpoints_bnorth.csv")
+png("boxplotf4f3f1bnorth.png")
+boxplot(a$dist ~ a$Nesting, ylab="Distance (m)", xlab="Nesting = 1    Not Nesting = 0") 
+dev.off()
+
+write.csv(a, "f4f3f1_nestpoints_bnorth.csv")
 
 
 
@@ -265,13 +268,13 @@ write.csv(a, "f1f4f3_nestpoints_bnorth.csv")
 #####Accuracy Assessment 
 # Add observed values
 obs<- read.csv("TestData/Observed_Values_Bnorth.csv")   ### MAKE SURE YOU ARE PULLING THE CORRECT FILE
-obs<-obs[ which(obs$Flight=="F1"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
+obs<-obs[ which(obs$Flight=="F4"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
 head(a)
 
 
-#calculate Kappa, sensitivity, specificty, auc
+#calculate Kappa, sensitivity, specificity, auc
 
 f<- as.data.frame(a)  #create a dataframe that can be used by package Presence Absence 
 
@@ -284,14 +287,14 @@ specificity<-specificity(cmx)
 auc<-auc(f)
 
 ### REMEMBER TO CHANGE FIGURE FILE NAMES
-png("F1F4F3summary_bnorth.png") ##Get ready to export the presence.absence.summary figure
+png("F4F3F1summary_bnorth.png") ##Get ready to export the presence.absence.summary figure
 presence.absence.summary(f)
 dev.off() #Export the latest figure
-png("F1F4F3ROC_bnorth.png")
+png("F4F3F1ROC_bnorth.png")
 auc.roc.plot(f)
 dev.off()
 
-Resultsf1f4f3bn<-data.frame(kappa, sensitivity, specificity, auc, colony="bnorth", flight="f1f4f3", stringsAsFactors =FALSE )
-ResultsAlltrip<-rbind(Resultsf1f3f4bs, Resultsf3f1f4bs, Resultsf3f4f1bs, Resultsf4f3f1bs, Resultsf4f1f3bs, Resultsf1f3f4bn, Resultsf3f1f4bn, Resultsf4f1f3bn, Resultsf1f4f3bn) 
+Resultsf4f3f1bn<-data.frame(kappa, sensitivity, specificity, auc, colony="bnorth", flight="f4f3f1", stringsAsFactors =FALSE )
+ResultsAlltrip<-rbind(Resultsf1f3f4bs, Resultsf3f1f4bs, Resultsf3f4f1bs, Resultsf4f3f1bs, Resultsf4f1f3bs, Resultsf1f3f4bn, Resultsf3f1f4bn, Resultsf4f1f3bn, Resultsf1f4f3bn, Resultsf3f4f1bn, Resultsf4f3f1bn) 
 ResultsAlltrip
 write.csv(ResultsAlltrip, "TriplicateAccuracyResults.csv")
