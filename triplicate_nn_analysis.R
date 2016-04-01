@@ -306,9 +306,9 @@ write.csv(ResultsAlltrip, "TriplicateAccuracyResults.csv")
 # C Colony
 # Create spatial points data frames from flight 1, flight 3, and flight 4 shapefiles
 
-a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_C")
-b <- readOGR(dsn="./TestData", layer="AWPE_F1_400_C")
-c <- readOGR(dsn="./TestData", layer="AWPE_F4_300_C")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_C")
+b <- readOGR(dsn="./TestData", layer="AWPE_F3_400_C")
+c <- readOGR(dsn="./TestData", layer="AWPE_F1_400_C")
 
 # create spatial point pattern using as.ppp function in Spatstat
 pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[2,1]), 
@@ -405,11 +405,11 @@ for(i in 1:nrow(a)){
 
 sum(a$Nesting) #How many birds did it classify as nesting 
 
-png("boxplotf3f1f4bC.png")
+png("boxplotf4f3f1C.png")
 boxplot(a$dist ~ a$Nesting, ylab="Distance (m)", xlab="Nesting = 1    Not Nesting = 0") 
 dev.off()
 
-write.csv(a, "f3f1f4_nestpoints_c.csv")
+write.csv(a, "f4f3f1_nestpoints_c.csv")
 
 
 
@@ -417,7 +417,7 @@ write.csv(a, "f3f1f4_nestpoints_c.csv")
 #####Accuracy Assessment 
 # Add observed values
 obs<- read.csv("TestData/Observed_Values_C.csv")   ### MAKE SURE YOU ARE PULLING THE CORRECT FILE
-obs<-obs[ which(obs$Flight=="F3"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
+obs<-obs[ which(obs$Flight=="F4"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
 head(a)
@@ -436,18 +436,20 @@ specificity<-specificity(cmx)
 auc<-auc(f)
 
 ### REMEMBER TO CHANGE FIGURE FILE NAMES
-png("F3F1F4summary_c.png") ##Get ready to export the presence.absence.summary figure
+png("f4f3f1summary_c.png") ##Get ready to export the presence.absence.summary figure
 presence.absence.summary(f)
 dev.off() #Export the latest figure
-png("F3F1F4ROC_c.png")
+png("f4f3f1ROC_c.png")
 auc.roc.plot(f)
 dev.off()
 
-Resultsf3f1f4c<-data.frame(kappa, sensitivity, specificity, auc, colony="c", flight="f3f1f4", stringsAsFactors =FALSE )
+Resultsf4f3f1c<-data.frame(kappa, sensitivity, specificity, auc, colony="c", flight="f4f3f1", stringsAsFactors =FALSE )
 ResultsAlltrip<-rbind(Resultsf1f3f4bs, Resultsf3f1f4bs, Resultsf3f4f1bs, Resultsf4f3f1bs, 
                       Resultsf4f1f3bs, Resultsf1f3f4bn, Resultsf3f1f4bn, Resultsf4f1f3bn, 
-                      Resultsf1f4f3bn, Resultsf3f4f1bn, Resultsf4f3f1bn, Resultsf1f3f4c, Resultsf3f1f4c) 
+                      Resultsf1f4f3bn, Resultsf3f4f1bn, Resultsf4f3f1bn, Resultsf1f3f4c, 
+                      Resultsf3f1f4c, Resultsf4f1f3c, Resultsf1f4f3c, Resultsf3f4f1c, Resultsf4f3f1c) 
 ResultsAlltrip
 write.csv(ResultsAlltrip, "TriplicateAccuracyResults.csv")
 
+write.csv(a, "checkme.csv")
 
