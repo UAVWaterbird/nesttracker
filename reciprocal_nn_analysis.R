@@ -23,14 +23,14 @@ pointsb <- as.ppp(b@coords, W=owin(xrange=c(b@bbox[1,1], b@bbox[1,2]),
 #Nearest neighbors from flight a to flight b
 pointsnn <- nncross(pointsa, pointsb)
 a$dist <- pointsnn$dist
-a$nnid <- b@data[pointsnn$which,3]                              ### be careful here! Make sure you have the correct column
+a$nnid <- b@data[pointsnn$which,]$UFID
 head(a) # "a" is the data for the flight from shapefile
 
 
 #Now go from flight b to flight a 
 pointsnnba <- nncross(pointsb, pointsa)
 b$dist <- pointsnnba$dist
-b$nnid <- a@data[pointsnnba$which,3]
+b$nnid <- a@data[pointsnnba$which,]$UFID
 head(b) # "b" is the data for the flight to shapefile 
 
 

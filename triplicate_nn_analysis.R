@@ -25,14 +25,14 @@ pointsc <- as.ppp(c@coords, W=owin(xrange=c(c@bbox[1,1], c@bbox[1,2]),
 #Nearest neighbors from flight a to flight b
 pointsnn <- nncross(pointsa, pointsb)
 a$dist <- pointsnn$dist
-a$nnid <- b@data[pointsnn$which,3]                              ### be careful here! Make sure you have the correct column
+a$nnid <- b@data[pointsnn$which,]$UFID
 head(a) 
 a$nnid <- as.character(a$nnid)
 
 #Now go from flight b to flight a 
 pointsnnba <- nncross(pointsb, pointsa)
 b$dist <- pointsnnba$dist
-b$nnid <- a@data[pointsnnba$which,3]
+b$nnid <- a@data[pointsnnba$which,]$UFID
 b$nnid <- as.character(b$nnid)
 head(b) 
 
@@ -41,7 +41,7 @@ head(b)
 pointsnnac <- nncross(pointsa, pointsc)
 ac<-a
 ac$dist <- pointsnnac$dist
-ac$nnid <- c@data[pointsnnac$which, 3] 
+ac$nnid <- c@data[pointsnnac$which,]$UFID 
 ac$nnid <- as.character(ac$nnid)
 head(ac) 
 
@@ -49,7 +49,7 @@ head(ac)
 pointsnnca <- nncross(pointsc, pointsa)
 ca<-c
 ca$dist <- pointsnnca$dist
-ca$nnid <- a@data[pointsnnca$which,3]                             
+ca$nnid <- a@data[pointsnnca$which,]$UFID                             
 ca$nnid <- as.character(ca$nnid)
 head(ca)
 
@@ -57,7 +57,7 @@ head(ca)
 pointsnnbc <- nncross(pointsb, pointsc)
 bc<-b
 bc$dist <- pointsnnbc$dist
-bc$nnid <- c@data[pointsnnbc$which,3]
+bc$nnid <- c@data[pointsnnbc$which,]$UFID
 bc$nnid <- as.character(bc$nnid)
 head(bc) 
 
@@ -65,7 +65,7 @@ head(bc)
 pointsnncb <- nncross(pointsc, pointsb)
 cb<-c
 cb$dist <- pointsnncb$dist
-cb$nnid <- b@data[pointsnncb$which,3]                             
+cb$nnid <- b@data[pointsnncb$which,]$UFID                            
 cb$nnid <- as.character(cb$nnid)
 head(cb)
 
