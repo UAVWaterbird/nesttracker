@@ -53,6 +53,7 @@ initiatenests <- function(nest.n, loafers.n, mean.nn, nn.sd, image.err=0,
   return(all.pts.df)
 }
 
+### [TODO]: incorporate image error?
 newflight <- function(initpts, loafers.n, mean.move, sd.move, image.err=0,
                       flight.id="B"){
   init.nests <- subset(initpts, observed==1)
