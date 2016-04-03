@@ -111,9 +111,11 @@ newflight <- function(initpts, loafers.n, mean.move=0, sd.move, image.err=0,
 
 
 ### TEST:
-sd.move <- 0.001
-nest.n <- 25
-new.nests <- initiatenests(nest.n=nest.n^2, loafers.n=0, mean.nn=1, nn.sd=0.5)
+# Observed std. dev b/w F3 & F4, B south = 0.2206345
+# (i.e. mean euclid. distance between n.n's * sqrt(2)/sqrt(pi))
+sd.move <- 0.2206345
+nest.n <- 10
+new.nests <- initiatenests(nest.n=nest.n^2, loafers.n=0, mean.nn=1, nn.sd=sd.move/2)
 plot(new.nests$y ~ new.nests$x)
 
 second.nests <- newflight(new.nests, loafers.n=0, mean.move=0, sd.move=sd.move, 
