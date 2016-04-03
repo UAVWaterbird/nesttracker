@@ -2,23 +2,12 @@
 
 library(spatstat)
 
-# Number of nesters (preferably a square)
-nest.n <- 100
-# Mean nearest neighbor distance of nests
-mean.nn <- 1
-# Standard deviation of n.n.
-nn.sd <- 0.2
-# Image error
-image.err <- 0
-# Number of loafers 
-loafers.n <- 10
-# Create flight ID
-flight.id <- "a"
-
 ## Function to generate inital nests and loafers
 ## [TODO]: incorporate image.err?
 ##    -if image.err, it will be incorporated as mean in generating
 ##      grid.noise?
+## [TODO]: how are loafers/attending mates dispersed within colony?
+##    -based on initial simulations, not randomly!
 
 ## NOTE: if nest.n is not a perfect square, the nest.n will be rounded
 ## to closest one (for now)
@@ -107,30 +96,6 @@ newflight <- function(initpts, loafers.n, mean.move=0, sd.move, image.err=0,
   
   return(all.pts.df)
 }
-
-
-
-### TEST:
-# Observed std. dev b/w F3 & F4, B south = 0.2206345
-# (i.e. mean euclid. distance between n.n's * sqrt(2)/sqrt(pi))
-sd.move <- 0.2206345
-nest.n <- 10
-new.nests <- initiatenests(nest.n=nest.n^2, loafers.n=0, mean.nn=1, nn.sd=sd.move/2)
-plot(new.nests$y ~ new.nests$x)
-
-second.nests <- newflight(new.nests, loafers.n=0, mean.move=0, sd.move=sd.move, 
-                          image.err=0, flight.id="B")
-points(second.nests$y ~ second.nests$x, col="red")
-
-loafer.test <- subset(new.nests, observed==0)
-nest.test <- subset(new.nests, observed==1)
-second.nest.test <- subset(second.nests, observed==1)
-plot(nest.test$y ~ nest.test$x)
-points(second.nest.test$y ~ second.nest.test$x, col="red")
-
-a <- SpatialPointsDataFrame(data.frame(new.nests$x, new.nests$y), data=new.nests)
-b <- SpatialPointsDataFrame(data.frame(second.nest.test$x, second.nest.test$y), data=second.nest.test)
-
 
 #### REMOVE:
 #### Test SD 
