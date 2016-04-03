@@ -12,11 +12,11 @@ library(PresenceAbsence)
 a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_Bsouth")
 b <- readOGR(dsn="./TestData", layer="AWPE_F3_400_Bsouth")
 
-pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[2,1]), 
-                                   yrange=c(a@bbox[1,2], a@bbox[2,2])))
+pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
+                                   yrange=c(a@bbox[2,1], a@bbox[2,2])))
 
-pointsb <- as.ppp(b@coords, W=owin(xrange=c(b@bbox[1,1], b@bbox[2,1]), 
-                                   yrange=c(b@bbox[1,2], b@bbox[2,2])))
+pointsb <- as.ppp(b@coords, W=owin(xrange=c(b@bbox[1,1], b@bbox[1,2]), 
+                                   yrange=c(b@bbox[2,1], b@bbox[2,2])))
 
 
 
