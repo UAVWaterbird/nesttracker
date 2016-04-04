@@ -91,7 +91,7 @@ triplicatenn <- function(a, b, c){
     # and a's nn in c is same as b's nn in c
     # and b's nn in a is same as c's nn in a
     # and b's nn in a is same as a's nn in b
-    # and c's nn in a is same as a's nn in c
+    # and c's nn in a is same as a's nn in c:
   
     if(nn_a_b_bird == nn_c_b_bird && nn_a_c_bird == nn_b_c_bird && nn_b_a_bird == nn_c_a_bird 
        && nn_b_a_bird == cur_bird$UFID && nn_c_a_bird == cur_bird$UFID){

@@ -75,11 +75,13 @@ newflight <- function(initpts, loafers.n, mean.move=0, sd.move, image.err=0,
   #init.nests$dist <- sqrt(init.nests$diffx^2 + init.nests$diffy^2)
   
   # Create ppp with nests
+  xrange <- (max(init.nests$newx) - min(init.nests$newx))
+  yrange <- (max(init.nests$newy) - min(init.nests$newy))
   nest.pts <- as.ppp(data.frame(init.nests$newx, init.nests$newy), 
-                     W=owin(xrange=c((min(init.nests$newx)-mean.nn), 
-                                     (max(init.nests$newx)+mean.nn)), 
-                            yrange=c((min(init.nests$newy)-mean.nn), 
-                                     (max(init.nests$newy)+mean.nn))))
+                     W=owin(xrange=c((min(init.nests$newx)-(0.1*xrange)), 
+                                     (max(init.nests$newx)+(0.1*xrange))), 
+                            yrange=c((min(init.nests$newy)-(0.1*yrange)), 
+                                     (max(init.nests$newy)+(0.1*yrange)))))
   # Generate loafers
   loafers <- runifpoint(n=loafers.n, win=nest.pts$window)
   

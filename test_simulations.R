@@ -100,7 +100,7 @@ summary(pcc.lm)
 # Question: what is effect of ratio of mean.nn/sd.move?
 # Question: what is role of prevalence (i.e. nesters vs. non-nesters)?
 
-### Extra Code:
+### Generic Code for replicate simulation:
 # Observed std. dev b/w F3 & F4, B south = 0.2206345
 # (i.e. mean euclid. distance between n.n's * sqrt(2)/sqrt(pi))
 nn.sd <- 0
@@ -125,3 +125,41 @@ spec <- specificity(my.cmx)
 pcc
 sens
 spec
+
+
+### Generic code for triplicate simulation:
+nn.sd <- 0
+sd.move <- 0.2
+nest.n <- 100
+loafers.n1 <- 0
+loafers.n2 <- 0
+loafers.n3 <- 0
+
+a <- initiatenests(nest.n=nest.n, loafers.n=loafers.n1, mean.nn=1, nn.sd=nn.sd)
+b <- newflight(a, loafers.n=loafers.n2, mean.move=0, sd.move=sd.move, image.err=0,
+               flight.id="B")
+c <- newflight(a, loafers.n=loafers.n3, mean.move=0, sd.move=sd.move, image.err=0,
+               flight.id="C")
+
+a <- SpatialPointsDataFrame(data.frame(a$x, a$y), data=a)
+b <- SpatialPointsDataFrame(data.frame(b$x, b$y), data=b)
+c <- SpatialPointsDataFrame(data.frame(c$x, c$y), data=c)
+
+plot(a, pch=1)
+points(b, col="red", pch=3)
+points(c, col="blue", pch=4)
+
+a <- triplicatenn(c, b, a)
+
+sum(a$Nesting)
+presabs.df <- data.frame(a$UFID, a$observed, a$Nesting)
+my.cmx <- cmx(presabs.df)
+pcc <- pcc(my.cmx, st.dev=F)
+sens <- sensitivity(my.cmx, st.dev=F)
+spec <- specificity(my.cmx, st.dev=F)
+pcc
+sens
+spec
+
+
+test <- rSSI(r=20, n=nest.n, win=square(130))
