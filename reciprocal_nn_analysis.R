@@ -12,6 +12,7 @@ library(PresenceAbsence)
 a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_Saddle")
 b <- readOGR(dsn="./TestData", layer="AWPE_F1_400_Saddle")
 
+<<<<<<< HEAD
 pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
                                    yrange=c(a@bbox[2,1], a@bbox[2,2])))
 
@@ -38,27 +39,54 @@ head(b) # "b" is the data for the flight to shapefile
 
 
 
+
 ######## Reciprocal Nearest Neighbor Distance ###############
 
 #Number of nesting birds from e.g., Flight 1 to Flight 4
-nesting_birds <- 0
 
-for(i in 1:nrow(a)){
-  # take a point from flight a
-  cur_bird <- a[i,]
-  # identify its nearest neighbor in flight b
-  nn_bird <- cur_bird$nnid
-  # find nearest neighbor from flight b
-  to_bird <- b[b$UFID == nn_bird,]
-  # if ITS nearest neighbor is point from flight a, add 1 to our count of nesting birds
-  if(to_bird$nnid == cur_bird$UFID){
-    #    nesting_birds <- nesting_birds + 1
-    a$Nesting[i] <- 1
-  } else {
-    a$Nesting[i] <- 0
-  }
+reciprocalnn <- function(a, b){
+  # Add testing to make sure a + b are SPDFs and have the right
+  # columns
   
+  pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
+                                     yrange=c(a@bbox[2,1], a@bbox[2,2])))
+  
+  pointsb <- as.ppp(b@coords, W=owin(xrange=c(b@bbox[1,1], b@bbox[1,2]), 
+                                     yrange=c(b@bbox[2,1], b@bbox[2,2])))
+  
+  #Nearest neighbors from flight a to flight b
+  pointsnn <- nncross(pointsa, pointsb)
+  a$dist <- pointsnn$dist
+  a$nnid <- b@data[pointsnn$which,]$UFID
+  head(a) # "a" is the data for the flight from shapefile
+  
+  #Now go from flight b to flight a 
+  pointsnnba <- nncross(pointsb, pointsa)
+  b$dist <- pointsnnba$dist
+  b$nnid <- a@data[pointsnnba$which,]$UFID
+  head(b) # "b" is the data for the flight to shapefile 
+  
+  nesting_birds <- 0
+  for(i in 1:nrow(a)){
+    # take a point from flight a
+    cur_bird <- a[i,]
+    # identify its nearest neighbor in flight b
+    nn_bird <- cur_bird$nnid
+    # find nearest neighbor from flight b
+    to_bird <- b[b$UFID == nn_bird,]
+    # if ITS nearest neighbor is point from flight a, add 1 to our count of nesting birds
+    if(to_bird$nnid == cur_bird$UFID){
+      #    nesting_birds <- nesting_birds + 1
+      a$Nesting[i] <- 1
+    } else {
+      a$Nesting[i] <- 0
+    }
+    
+  }
+  return(a)
 }
+
+a <- reciprocalnn(a, b)
 
 sum(a$Nesting)
 #See list of the birds that were counted as non nesters 
