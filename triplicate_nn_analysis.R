@@ -12,98 +12,102 @@ a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_Bsouth")
 b <- readOGR(dsn="./TestData", layer="AWPE_F1_400_Bsouth")
 c <- readOGR(dsn="./TestData", layer="AWPE_F3_400_Bsouth")
 
-# create spatial point pattern using as.ppp function in Spatstat
-pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
-                                   yrange=c(a@bbox[2,1], a@bbox[2,2])))
-
-pointsb <- as.ppp(b@coords, W=owin(xrange=c(b@bbox[1,1], b@bbox[1,2]), 
-                                   yrange=c(b@bbox[2,1], b@bbox[2,2])))
-
-pointsc <- as.ppp(c@coords, W=owin(xrange=c(c@bbox[1,1], c@bbox[1,2]), 
-                                   yrange=c(c@bbox[2,1], c@bbox[2,2])))
-
-#Nearest neighbors from flight a to flight b
-pointsnn <- nncross(pointsa, pointsb)
-a$dist <- pointsnn$dist
-a$nnid <- b@data[pointsnn$which,]$UFID
-head(a) 
-a$nnid <- as.character(a$nnid)
-
-#Now go from flight b to flight a 
-pointsnnba <- nncross(pointsb, pointsa)
-b$dist <- pointsnnba$dist
-b$nnid <- a@data[pointsnnba$which,]$UFID
-b$nnid <- as.character(b$nnid)
-head(b) 
-
-
-# from flight a to flight c
-pointsnnac <- nncross(pointsa, pointsc)
-ac<-a
-ac$dist <- pointsnnac$dist
-ac$nnid <- c@data[pointsnnac$which,]$UFID 
-ac$nnid <- as.character(ac$nnid)
-head(ac) 
-
-#from flight c to flight a 
-pointsnnca <- nncross(pointsc, pointsa)
-ca<-c
-ca$dist <- pointsnnca$dist
-ca$nnid <- a@data[pointsnnca$which,]$UFID                             
-ca$nnid <- as.character(ca$nnid)
-head(ca)
-
-#from flight b to flight c
-pointsnnbc <- nncross(pointsb, pointsc)
-bc<-b
-bc$dist <- pointsnnbc$dist
-bc$nnid <- c@data[pointsnnbc$which,]$UFID
-bc$nnid <- as.character(bc$nnid)
-head(bc) 
-
-#from flight c to flight b 
-pointsnncb <- nncross(pointsc, pointsb)
-cb<-c
-cb$dist <- pointsnncb$dist
-cb$nnid <- b@data[pointsnncb$which,]$UFID                            
-cb$nnid <- as.character(cb$nnid)
-head(cb)
-
-nesting_birds <- 0
-non.nesters <- NULL
-
-for(i in 1:nrow(a)){
-  # take a point from flight a
-  cur_bird <- a[i,]
+triplicatenn <- function(a, b, c){
+  # create spatial point pattern using as.ppp function in Spatstat
+  pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
+                                     yrange=c(a@bbox[2,1], a@bbox[2,2])))
   
-  # identify its nearest neighbor in flight b
-  nn_a_b_bird <- cur_bird$nnid
-  nn_a_c_bird <- ac$nnid[ac$UFID==cur_bird$UFID] 
+  pointsb <- as.ppp(b@coords, W=owin(xrange=c(b@bbox[1,1], b@bbox[1,2]), 
+                                     yrange=c(b@bbox[2,1], b@bbox[2,2])))
   
-  nn_b_a_bird <- b$nnid[b$UFID==nn_a_b_bird]
-  nn_b_c_bird <- bc$nnid[bc$UFID==nn_a_b_bird]
-
-  nn_c_a_bird <- ca$nnid[ca$UFID==nn_a_c_bird]
-  nn_c_b_bird <- cb$nnid[cb$UFID==nn_b_c_bird]
+  pointsc <- as.ppp(c@coords, W=owin(xrange=c(c@bbox[1,1], c@bbox[1,2]), 
+                                     yrange=c(c@bbox[2,1], c@bbox[2,2])))
   
-  # if a's nn in b is same as c's nn in b
-  # and a's nn in c is same as b's nn in c
-  # and b's nn in a is same as c's nn in a
-  # and b's nn in a is same as a's nn in b
-  # and c's nn in a is same as a's nn in c
-
-  if(nn_a_b_bird == nn_c_b_bird && nn_a_c_bird == nn_b_c_bird && nn_b_a_bird == nn_c_a_bird 
-     && nn_b_a_bird == cur_bird$UFID && nn_c_a_bird == cur_bird$UFID){
-    # add one to count of nesting birds  
-    #nesting_birds <- nesting_birds + 1
-    a$Nesting[i]<- 1
+  #Nearest neighbors from flight a to flight b
+  pointsnn <- nncross(pointsa, pointsb)
+  a$dist <- pointsnn$dist
+  a$nnid <- b@data[pointsnn$which,]$UFID
+  head(a) 
+  a$nnid <- as.character(a$nnid)
+  
+  #Now go from flight b to flight a 
+  pointsnnba <- nncross(pointsb, pointsa)
+  b$dist <- pointsnnba$dist
+  b$nnid <- a@data[pointsnnba$which,]$UFID
+  b$nnid <- as.character(b$nnid)
+  head(b) 
+  
+  
+  # from flight a to flight c
+  pointsnnac <- nncross(pointsa, pointsc)
+  ac<-a
+  ac$dist <- pointsnnac$dist
+  ac$nnid <- c@data[pointsnnac$which,]$UFID 
+  ac$nnid <- as.character(ac$nnid)
+  head(ac) 
+  
+  #from flight c to flight a 
+  pointsnnca <- nncross(pointsc, pointsa)
+  ca<-c
+  ca$dist <- pointsnnca$dist
+  ca$nnid <- a@data[pointsnnca$which,]$UFID                             
+  ca$nnid <- as.character(ca$nnid)
+  head(ca)
+  
+  #from flight b to flight c
+  pointsnnbc <- nncross(pointsb, pointsc)
+  bc<-b
+  bc$dist <- pointsnnbc$dist
+  bc$nnid <- c@data[pointsnnbc$which,]$UFID
+  bc$nnid <- as.character(bc$nnid)
+  head(bc) 
+  
+  #from flight c to flight b 
+  pointsnncb <- nncross(pointsc, pointsb)
+  cb<-c
+  cb$dist <- pointsnncb$dist
+  cb$nnid <- b@data[pointsnncb$which,]$UFID                            
+  cb$nnid <- as.character(cb$nnid)
+  head(cb)
+  
+  nesting_birds <- 0
+  non.nesters <- NULL
+  
+  for(i in 1:nrow(a)){
+    # take a point from flight a
+    cur_bird <- a[i,]
     
-  } else {
-    # if not, record the ID of the non-nesting bird from flight a
-    #non.nesters <- c(non.nesters, i)
-    a$Nesting[i] <- 0
+    # identify its nearest neighbor in flight b
+    nn_a_b_bird <- cur_bird$nnid
+    nn_a_c_bird <- ac$nnid[ac$UFID==cur_bird$UFID] 
+    
+    nn_b_a_bird <- b$nnid[b$UFID==nn_a_b_bird]
+    nn_b_c_bird <- bc$nnid[bc$UFID==nn_a_b_bird]
+  
+    nn_c_a_bird <- ca$nnid[ca$UFID==nn_a_c_bird]
+    nn_c_b_bird <- cb$nnid[cb$UFID==nn_b_c_bird]
+    
+    # if a's nn in b is same as c's nn in b
+    # and a's nn in c is same as b's nn in c
+    # and b's nn in a is same as c's nn in a
+    # and b's nn in a is same as a's nn in b
+    # and c's nn in a is same as a's nn in c
+  
+    if(nn_a_b_bird == nn_c_b_bird && nn_a_c_bird == nn_b_c_bird && nn_b_a_bird == nn_c_a_bird 
+       && nn_b_a_bird == cur_bird$UFID && nn_c_a_bird == cur_bird$UFID){
+      # add one to count of nesting birds  
+      #nesting_birds <- nesting_birds + 1
+      a$Nesting[i]<- 1
+      
+    } else {
+      # if not, record the ID of the non-nesting bird from flight a
+      #non.nesters <- c(non.nesters, i)
+      a$Nesting[i] <- 0
+    }
   }
+  return(a)
 }
+a <- triplicatenn(a, b, c)
 
 sum(a$Nesting) #How many birds did it classify as nesting 
 boxplot(a$dist ~ a$Nesting) ### export as a figure after some clean up? 
