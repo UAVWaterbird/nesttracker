@@ -8,9 +8,9 @@ library(PresenceAbsence)
 library(maptools)
 # Create spatial points data frames from flight 1, flight 3, and flight 4 shapefiles
 
-a <- readOGR(dsn="./TestData", layer="AWPE_F1_400_BluffNorth")
-b <- readOGR(dsn="./TestData", layer="AWPE_F3_400_BluffNorth")
-c <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffNorth")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffNorth")
+b <- readOGR(dsn="./TestData", layer="AWPE_F1_400_BluffNorth")
+c <- readOGR(dsn="./TestData", layer="AWPE_F3_400_BluffNorth")
 
 triplicatenn <- function(a, b, c){
   # create spatial point pattern using as.ppp function in Spatstat
@@ -117,7 +117,7 @@ png("boxplotf1f3f4bluffn.png")
 boxplot(a$dist ~ a$Nesting) ### export as a figure after some clean up? 
 dev.off()
 
-write.csv(a, "f1f3f4_nestpoints_bluffn.csv")
+write.csv(a, "f4f1f3_nestpoints_bluffn.csv")
 
 
 
