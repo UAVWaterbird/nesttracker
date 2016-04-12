@@ -113,7 +113,7 @@ a <- triplicatenn(a, b, c)
 
 sum(a$Nesting) #How many birds did it classify as nesting 
 
-png("boxplotf1f3f4bluffn.png")
+png("boxplotf4f1f3bluffn.png")
 boxplot(a$dist ~ a$Nesting) ### export as a figure after some clean up? 
 dev.off()
 
