@@ -9,38 +9,12 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_Saddle")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_SaddleSHIFT")
 b <- readOGR(dsn="./TestData", layer="AWPE_F1_400_Saddle")
 
-<<<<<<< HEAD
-pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
-                                   yrange=c(a@bbox[2,1], a@bbox[2,2])))
-
-pointsb <- as.ppp(b@coords, W=owin(xrange=c(b@bbox[1,1], b@bbox[1,2]), 
-                                   yrange=c(b@bbox[2,1], b@bbox[2,2])))
 
 
-
-#Nearest neighbors from flight a to flight b
-pointsnn <- nncross(pointsa, pointsb)
-a$dist <- pointsnn$dist
-a$nnid <- b@data[pointsnn$which, "UFID"]                              
-head(a) # "a" is the data for the flight from shapefile
-
-
-#Now go from flight b to flight a 
-pointsnnba <- nncross(pointsb, pointsa)
-b$dist <- pointsnnba$dist
-b$nnid <- a@data[pointsnnba$which,"UFID"]
-head(b) # "b" is the data for the flight to shapefile 
-
-
-
-
-
-
-
-######## Reciprocal Nearest Neighbor Distance ###############
+######## Reciprocal Nearest Neighbor ###############
 
 #Number of nesting birds from e.g., Flight 1 to Flight 4
 
@@ -96,7 +70,7 @@ NoNest
 ActiveNest<-subset(a, Nesting==1)
 #ActiveNest # remove the "#" to see the list of birds classified as nesting
 
-png("boxplotf3f1c.png")
+png("boxplotf4f1saddle.png")
 boxplot(a$dist ~ a$Nesting)
 dev.off()
 
@@ -104,11 +78,11 @@ dev.off()
 
 # Add observed values
 obs<- read.csv("TestData/Observed_Values_Saddle.csv")
-obs<-obs[ which(obs$Flight=="F3"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
+obs<-obs[ which(obs$Flight=="F4"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
 head(a)  ## this names the column "observed.observed" , need to figure out why is adding the ".observed"
-#write.csv(a, "F4F3.csv")                   #### CHANGE FILE NAME
+write.csv(a, "f4f1_recip_saddle.csv")                   #### CHANGE FILE NAME
 
 ### Here is where I want to create a shapefile of only birds that I think are actively nesting 
 ### e.g., writeOGR(a, "BSouthnest1", driver="ESRI shapefile")
@@ -124,19 +98,23 @@ kappa<-Kappa(cmx)
 sensitivity<-sensitivity(cmx)
 specificity<-specificity(cmx)
 auc<-auc(f)
-png("f3f1summary_saddle.png") ##Get ready to export the presence.absence.summary figure
+png("f4f1summary_saddle.png") ##Get ready to export the presence.absence.summary figure
 presence.absence.summary(f)
 dev.off() #Export the latest figure
-png("f3f1ROC_saddle.png")
+png("f4f1ROC_saddle.png")
 auc.roc.plot(f)
 dev.off()
 
 #accresults<-data.frame("kappa"=character(0), "kappa.sd"=character(0), "sensitivity"=character(0),"sensitivity.sd"=character(0), "specificity"=character(0), "specificity.sd"=character(0), "auc"=character(0),"auc.sd"=character(0), "colony"=character(0), "flight"=character(0), stringsAsFactors = FALSE) #Only use this line for first series
-Resultsf3f1saddle<-data.frame(kappa, sensitivity, specificity, auc, colony="saddle", flight="f3f1", stringsAsFactors =FALSE )
+Resultsf4f1saddle<-data.frame(kappa, sensitivity, specificity, auc, colony="saddle", flight="f4f1", stringsAsFactors =FALSE )
 
 ResultsAll<-rbind(Resultsf1f3bnorth, Resultsf3f1bnorth, Resultsf4f1bnorth, Resultsf1f4bnorth,
                   Resultsf3f4bnorth, Resultsf4f3bnorth, Resultsf4f3c, Resultsf3f4c, Resultsf1f4c, 
-                  Resultsf4f1c, Resultsf1f3c, Resultsf3f1c, Resultsf3f1saddle) 
+                  Resultsf4f1c, Resultsf1f3c, Resultsf3f1c, Resultsf1f3bluffn, Resultsf3f1bluffn, 
+                  Resultsf3f4bluffn, Resultsf4f3bluffn, Resultsf4f1bluffn, Resultsf1f4bluffn, 
+                  Resultsf1f4bsouth, Resultsf4f1bsouth, Resultsf4f3bsouth, Resultsf3f4bsouth, 
+                  Resultsf3f1bsouth, Resultsf1f3bsouth, Resultsf1f3saddle, Resultsf3f1saddle, 
+                  Resultsf3f4saddle, Resultsf4f3saddle, Resultsf4f1saddle) 
 ResultsAll
 # to delete a row = e.g., ResultsAll<-ResultsAll[-c(2, 4, 6), ]
 #to export results
