@@ -5,7 +5,7 @@ library(ggplot2)
 library(plyr)
 library(reshape2)
 
-setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Products\\Figures")
+setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Nesttracker\\nesttracker")
 test<-read.csv("test_data.csv")
 test
 
