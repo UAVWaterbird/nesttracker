@@ -8,8 +8,12 @@ library(reshape2)
 setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Nesttracker\\nesttracker")
 test<-read.csv("test_data.csv")
 test
+observed <- test$Count[test$Count_Type=="Observed"]
+test <- subset(test, Count_Type != "Observed")
+test$Count_Type <- droplevels(test$Count_Type)
 
 boxplot(Count ~ Count_Type, data=test, ylim=c(400, 900))
+abline(h=observed, lty=2)
 
 x<-test$Sub_Type
 
@@ -26,7 +30,11 @@ x1<- x + geom_boxplot(outlier.shape=3)
 x1
 x1 + geom_point(position = position_jitter(width = 0.2))
 x2 <- x + geom_boxplot(outlier.colour = NA)
-x2 + geom_point(position = position_jitter(width = 0.2))
+x2 + geom_point(position = position_jitter(width = 0.2)) +
+  geom_hline(yintercept = 811)
+
+# alternate figure:
+x + geom_point(position=)
 
 ##############################################################################################
 # test some barplot code
@@ -75,8 +83,9 @@ arrows(barCenters, test.means$mean - test.means$se * 2, barCenters,
 ggplot(test, aes(x=test$Count_Type, y= test$Count)) + geom_jitter()
 # Change the position
 # 0.3 : degree of jitter in x direction
+
 strip<-ggplot(test, aes(x=test$Count_Type, y= test$Count)) + 
-  geom_jitter(position=position_jitter(0.3), size=4)
+  geom_jitter(position=position_jitter(0.3), size=2)
 strip
 #try it flipped
 stripflip<-strip + coord_flip()
@@ -84,8 +93,9 @@ stripflip
 
 #add some stats
 stripmean<-strip + stat_summary(fun.y=mean, geom="point", shape=18,
-             size=4, color="red")
-stripmean
+             size=3, color="red") + ylim(0, 900)
+stripmean + geom_hline(yintercept = observed, linetype=2)
+
 
 # stripchart using kappa stats
 test2<-read.csv("test_data2.csv")
