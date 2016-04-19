@@ -102,7 +102,7 @@ test2<-read.csv("test_data2.csv")
 test2
 stripstats<-ggplot(test2, aes(x=test2$Method, y= test2$Kappa)) + 
   geom_jitter(position=position_jitter(0.3), size=4)
-stripstats
+stripstats + ylim(0, 1)
 
 test3<-read.csv("test_data3.csv")
 test3
