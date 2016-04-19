@@ -8,9 +8,9 @@ library(PresenceAbsence)
 library(maptools)
 # Create spatial points data frames from flight 1, flight 3, and flight 4 shapefiles
 
-a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffSouth")
-b <- readOGR(dsn="./TestData", layer="AWPE_F3_400_BluffSouthSHIFT")
-c <- readOGR(dsn="./TestData", layer="AWPE_F1_400_BluffSouth")
+a <- readOGR(dsn="./TestData", layer="AWPE_F1_400_C")
+b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_C")
+c <- readOGR(dsn="./TestData", layer="AWPE_F3_400_C")
 
 triplicatenn <- function(a, b, c){
   # create spatial point pattern using as.ppp function in Spatstat
@@ -111,21 +111,21 @@ triplicatenn <- function(a, b, c){
 
 a <- triplicatenn(a, b, c)
 
-sum(a$Nesting) #How many birds did it classify as nesting 
-
-png("boxplotf3f1f4bluffs.png")
+nestimate<-sum(a$Nesting) #How many birds did it classify as nesting 
+nestimate
+png("boxplotf1f3f4c.png")
 boxplot(a$dist ~ a$Nesting) ### export as a figure after some clean up? 
 dev.off()
 
-write.csv(a, "f1f3f4_nestpoints_bluffs.csv")
+write.csv(a, "f1f3f4_nestpoints_c.csv")
 
 
 
 ##################################################
 #####Accuracy Assessment 
 # Add observed values
-obs<- read.csv("TestData/Observed_Values_Bluffnorth.csv")   ### MAKE SURE YOU ARE PULLING THE CORRECT FILE
-obs<-obs[ which(obs$Flight=="F4"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
+obs<- read.csv("TestData/Observed_Values_C.csv")   ### MAKE SURE YOU ARE PULLING THE CORRECT FILE
+obs<-obs[ which(obs$Flight=="F1"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
 head(a)
@@ -138,6 +138,7 @@ f<- as.data.frame(a)  #create a dataframe that can be used by package Presence A
 f<-data.frame(f$UFID, f$observed, f$Nesting)
 
 cmx<-cmx(f, which.model=1)
+PCC<-pcc(cmx)
 kappa<-Kappa(cmx)
 sensitivity<-sensitivity(cmx)
 specificity<-specificity(cmx)
@@ -155,7 +156,11 @@ dev.off()
 
 
 ## Create (add to) results table 
-Resultsf4f3f1bluffn<-data.frame(kappa, sensitivity, specificity, auc, colony="bluffn", flight="f4f3f1", stringsAsFactors =FALSE )
+Resultsf143c<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="c", flight="f1f4f3", stringsAsFactors =FALSE )
+ResultsAlltripfix<-rbind(Resultsf134c, Resultsf314c, Resultsf341c, Resultsf431c, Resultsf413c, Resultsf143c)
+ResultsAlltripfix
+write.csv(ResultsAlltripfix, "TriplicateAccuracyResultsFIX.csv")
+
 ResultsAlltrip<-rbind(Resultsf1f3f4bs, Resultsf3f1f4bs, Resultsf3f4f1bs, Resultsf4f3f1bs, 
                       Resultsf4f1f3bs, Resultsf1f3f4bn, Resultsf3f1f4bn, Resultsf4f1f3bn, 
                       Resultsf1f4f3bn, Resultsf3f4f1bn, Resultsf4f3f1bn, Resultsf1f3f4c, 

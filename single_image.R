@@ -7,7 +7,7 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_Bnorth")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_C")
 
 pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
                                    yrange=c(a@bbox[2,1], a@bbox[2,2])))
@@ -88,6 +88,11 @@ dev.off() #Export the latest figure
 png("f4ROC_Range_bnorth.png")
 auc.roc.plot(f)
 dev.off()
+
+
+Rf4c<-data.frame(PCC,kappa, sensitivity, specificity, auc, colony="c", flight="f4", stringsAsFactors =FALSE )
+
+ResultsFIX<-rbind(Rf4c)
 
 Resultsf4bnorth<-data.frame(kappa, sensitivity, specificity, auc, colony="bnorth", flight="f4", stringsAsFactors =FALSE )
 

@@ -9,8 +9,8 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn="./TestData", layer="AWPE_F1_400_Saddle")
-b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_SaddleSHIFT")
+a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_C")
+b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_C")
 
 
 
@@ -62,7 +62,8 @@ reciprocalnn <- function(a, b){
 
 a <- reciprocalnn(a, b)
 
-sum(a$Nesting)
+nestimate<-sum(a$Nesting)
+nestimate
 #See list of the birds that were counted as non nesters 
 NoNest<-subset(a, Nesting==0)
 NoNest
@@ -77,11 +78,12 @@ dev.off()
 ###Accuracy Assessment for Multitemporal Nearest Neighbor ###
 
 # Add observed values
-obs<- read.csv("TestData/Observed_Values_Saddle.csv")
-obs<-obs[ which(obs$Flight=="F1"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
+obs<- read.csv("TestData/Observed_Values_C.csv")
+obs<-obs[ which(obs$Flight=="F3"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
 head(a)  ## this names the column "observed.observed" , need to figure out why is adding the ".observed"
+
 write.csv(a, "f1f4_recip_saddle.csv")                   #### CHANGE FILE NAME
 
 ### Here is where I want to create a shapefile of only birds that I think are actively nesting 
@@ -94,10 +96,13 @@ f<- as.data.frame(a)  #create a dataframe that can be used by package Presence A
 f<-data.frame(f$UFID, f$observed, f$Nesting)
 
 cmx<-cmx(f, which.model=1)
+PCC<-pcc(cmx)
 kappa<-Kappa(cmx)
 sensitivity<-sensitivity(cmx)
 specificity<-specificity(cmx)
 auc<-auc(f)
+
+
 png("f1f4summary_saddle.png") ##Get ready to export the presence.absence.summary figure
 presence.absence.summary(f)
 dev.off() #Export the latest figure
@@ -106,7 +111,17 @@ auc.roc.plot(f)
 dev.off()
 
 #accresults<-data.frame("kappa"=character(0), "kappa.sd"=character(0), "sensitivity"=character(0),"sensitivity.sd"=character(0), "specificity"=character(0), "specificity.sd"=character(0), "auc"=character(0),"auc.sd"=character(0), "colony"=character(0), "flight"=character(0), stringsAsFactors = FALSE) #Only use this line for first series
-Resultsf1f4saddle<-data.frame(kappa, sensitivity, specificity, auc, colony="saddle", flight="f1f4", stringsAsFactors =FALSE )
+Resultsf34c<-data.frame(PCC, kappa, sensitivity, specificity, auc, colony="c", flight="f3f4", stringsAsFactors =FALSE )
+ResultsAllFIX<-rbind(Resultsf31c, Resultsf13c, Resultsf43c, Resultsf41c, Resultsf14c, Resultsf34c)
+ResultsAllFIX
+write.csv(ResultsAllFIX,"RecipResultsFIX.csv")
+
+
+
+
+
+
+Resultsf1f4saddle<-data.frame(kappa, sensitivity, specificity, auc, nestimate, colony="saddle", flight="f1f4", stringsAsFactors =FALSE )
 
 ResultsAll<-rbind(Resultsf1f3bnorth, Resultsf3f1bnorth, Resultsf4f1bnorth, Resultsf1f4bnorth,
                   Resultsf3f4bnorth, Resultsf4f3bnorth, Resultsf4f3c, Resultsf3f4c, Resultsf1f4c, 
