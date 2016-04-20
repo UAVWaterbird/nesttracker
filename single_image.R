@@ -13,9 +13,10 @@ pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]),
                                    yrange=c(a@bbox[2,1], a@bbox[2,2])))
 
 #calculate the nearest neighbor within the shapefile 
-## which one is better to use - nndist or nnwhich? 
 pointsnn <- nndist(pointsa, k=1, by=marks(a))
 a$dist <- pointsnn
+pointwhich<-nnwhich(pointsa)
+a$nnid <- pointwhich
 
 #add observed values
 obs<- read.csv("TestData/Observed_Values_Bnorth.csv")
