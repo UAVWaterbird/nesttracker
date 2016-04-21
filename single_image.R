@@ -17,6 +17,44 @@ pointsnn <- nndist(pointsa, k=1, by=marks(a))
 a$dist <- pointsnn
 pointwhich<-nnwhich(pointsa)
 a$nnid <- pointwhich
+a$nnid2 <- a$UFID[nnwhich(pointsa)]
+
+#sort the points by nn distance
+asort <- a[order(a$dist),] 
+
+#first find if there are reciprocal neighbors 
+recip <- 0
+for(i in seq_along(asort)){
+  # take a point from flight a
+  cur_bird <- asort[i,]
+  next_bird<-asort[i+1,]
+  # identify its nearest neighbor
+  nn_bird <- next_bird$nnid2
+  
+  #find the nearest neighbor of the cur_bird on the next line down
+  # if ITS nearest neighbor is point from flight a, add 1 to our count of nesting birds
+  if(nn_bird == cur_bird$UFID){
+    #    nesting_birds <- nesting_birds + 1
+    a$recip[i] <- 0
+  } else {
+    a$recip[i] <- 1
+  }
+}
+#This finds reciprocal nn's within a single image but I need it to find reciprocals and only
+#assign 1 bird out of the pair a "1"
+#In Excel, this works by saying "if the current bird is equal to the nnid on the next row, add 0."
+#Does this only work if the points are sorted? 
+head(a)
+
+
+
+
+
+
+
+
+
+
 
 #add observed values
 obs<- read.csv("TestData/Observed_Values_Bnorth.csv")

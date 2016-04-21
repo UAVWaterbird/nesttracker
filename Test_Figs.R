@@ -33,8 +33,7 @@ x2 <- x + geom_boxplot(outlier.colour = NA)
 x2 + geom_point(position = position_jitter(width = 0.2)) +
   geom_hline(yintercept = 811)
 
-# alternate figure:
-x + geom_point(position=)
+
 
 ##############################################################################################
 # test some barplot code
