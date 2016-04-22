@@ -12,6 +12,23 @@ a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_C")
 pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
                                    yrange=c(a@bbox[2,1], a@bbox[2,2])))
 
+
+###a Stienen diagram, just for fun
+stienen(pointsa)
+# plot nearest neighbour links
+pointwhich<-nnwhich(pointsa)
+Z<- pointsa[pointwhich]
+arrows(pointsa$x, pointsa$y, Z$x, Z$y, angle=15, length=0.01,col="red")
+# find points which are the neighbour of their neighbour
+#Just screwing around 
+self <- (pointwhich[pointwhich] == seq(pointwhich))
+# plot them
+A <- pointsa[self]
+B <- pointsa[pointwhich[self]]
+plot(pointsa)
+segments(A$x, A$y, B$x, B$y)
+
+
 #calculate the nearest neighbor within the shapefile 
 pointsnn <- nndist(pointsa, k=1, by=marks(a))
 a$dist <- pointsnn
@@ -20,44 +37,63 @@ a$nnid <- pointwhich
 a$nnid2 <- a$UFID[nnwhich(pointsa)]
 
 #sort the points by nn distance
+# but first add observed values before sorting
+obs<- read.csv("TestData/Observed_Values_C.csv")
+obs<-obs[ which(obs$Flight=="F4"), ] 
+a$observed <- obs$Observed
+head(a)
 asort <- a[order(a$dist),] 
 
 #first find if there are reciprocal neighbors 
 recip <- 0
-for(i in seq_along(asort)){
+for(i in 1:nrow(asort)){
   # take a point from flight a
   cur_bird <- asort[i,]
-  next_bird<-asort[i+1,]
   # identify its nearest neighbor
-  nn_bird <- next_bird$nnid2
-  
+  nn_bird <- cur_bird$nnid2
+  # find nearest neighbor from flight b
+  nnid_bird <- asort[asort$UFID == nn_bird,]
   #find the nearest neighbor of the cur_bird on the next line down
   # if ITS nearest neighbor is point from flight a, add 1 to our count of nesting birds
-  if(nn_bird == cur_bird$UFID){
+  if(nnid_bird$nnid2 == cur_bird$UFID){  
     #    nesting_birds <- nesting_birds + 1
-    a$recip[i] <- 0
+    asort$recip[i] <- 0
   } else {
-    a$recip[i] <- 1
+    asort$recip[i] <- 1
   }
 }
-#This finds reciprocal nn's within a single image but I need it to find reciprocals and only
-#assign 1 bird out of the pair a "1"
-#In Excel, this works by saying "if the current bird is equal to the nnid on the next row, add 0."
-#Does this only work if the points are sorted? 
-head(a)
+
+for(i in 1:nrow(asort)){
+  if(asort$recip==0 && asort$dist<.74){
+    asort$temp[i]<-0
+  } else{
+    asort$temp[i]<-1
+  }
+}
+
+for(i in 1:nrow(asort)){
+  if(asort$temp==0 || asort$dist>1.85){
+    asort$nesting[i]<-0
+  } else{
+    asort$nesting[i]<-1
+  }
+}
+# Here is what it looks like when you you pull out just the "attending mate" (see nesting column) 
+#note that it still doesn't do a good job at predicting, but I think it makes the most sense to pull
+# attending mates and outliers out. 
+excel<-read.csv("singleimage_testdata.csv")
 
 
 
 
-
-
+##########################################################################
 
 
 
 
 
 #add observed values
-obs<- read.csv("TestData/Observed_Values_Bnorth.csv")
+obs<- read.csv("TestData/Observed_Values_C.csv")
 obs<-obs[ which(obs$Flight=="F4"), ] 
 a$observed <- obs$Observed
 head(a)
@@ -118,6 +154,7 @@ f<-data.frame(f$UFID, f$observed, f$Nesting)
 
 cmx<-cmx(f, which.model=1)
 kappa<-Kappa(cmx)
+PCC<-pcc(cmx)
 sensitivity<-sensitivity(cmx)
 specificity<-specificity(cmx)
 auc<-auc(f)
