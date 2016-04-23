@@ -9,8 +9,8 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_C")
-b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_C")
+a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_BluffNorth")
+b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffNorth")
 
 
 
@@ -78,7 +78,7 @@ dev.off()
 ###Accuracy Assessment for Multitemporal Nearest Neighbor ###
 
 # Add observed values
-obs<- read.csv("TestData/Observed_Values_C.csv")
+obs<- read.csv("TestData/Observed_Values_BluffNorth.csv")
 obs<-obs[ which(obs$Flight=="F3"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
@@ -111,9 +111,21 @@ auc.roc.plot(f)
 dev.off()
 
 #accresults<-data.frame("kappa"=character(0), "kappa.sd"=character(0), "sensitivity"=character(0),"sensitivity.sd"=character(0), "specificity"=character(0), "specificity.sd"=character(0), "auc"=character(0),"auc.sd"=character(0), "colony"=character(0), "flight"=character(0), stringsAsFactors = FALSE) #Only use this line for first series
-Resultsf34c<-data.frame(PCC, kappa, sensitivity, specificity, auc, colony="c", flight="f3f4", stringsAsFactors =FALSE )
-ResultsAllFIX<-rbind(Resultsf31c, Resultsf13c, Resultsf43c, Resultsf41c, Resultsf14c, Resultsf34c)
+#Resultsf13bluffn<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffn", flight="f1f3", stringsAsFactors =FALSE )
+#Resultsf14bluffn<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffn", flight="f1f4", stringsAsFactors =FALSE )
+#Resultsf41bluffn<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffn", flight="f4f1", stringsAsFactors =FALSE )
+#Resultsf43bluffn<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffn", flight="f4f3", stringsAsFactors =FALSE )
+#Resultsf31bluffn<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffn", flight="f3f1", stringsAsFactors =FALSE )
+#Resultsf34bluffn<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffn", flight="f3f4", stringsAsFactors =FALSE )
+
+ResultsAllFIX<-rbind(Resultsf31c, Resultsf13c, Resultsf43c, Resultsf41c, Resultsf14c, Resultsf34c, 
+                     Resultsf13bsouth, Resultsf14bsouth, Resultsf41bsouth, Resultsf43bsouth, Resultsf31bsouth, 
+                     Resultsf34bsouth, Resultsf13bnorth, Resultsf14bnorth, Resultsf41bnorth, Resultsf43bnorth, 
+                     Resultsf31bnorth, Resultsf34bnorth, Resultsf13saddle, Resultsf14saddle, Resultsf41saddle, 
+                     Resultsf43saddle, Resultsf31saddle, Resultsf34saddle, Resultsf13bluffn, Resultsf14bluffn,
+                     Resultsf41bluffn, Resultsf43bluffn, Resultsf31bluffn, Resultsf34bluffn)
 ResultsAllFIX
+
 write.csv(ResultsAllFIX,"RecipResultsFIX.csv")
 
 

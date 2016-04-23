@@ -44,52 +44,29 @@ a$observed <- obs$Observed
 head(a)
 asort <- a[order(a$dist),] 
 
-##TEST a BS workaround
+##Test a BS workaround to pull 1 bird out of every reciprocal pair
 asort$nnidshift<-asort$nnid2[c(2:length(asort$nnid2), 1)]
 for(i in 1:nrow(asort)){
   #take a point
-  cur_bird<-asort$UFID[i,]
+  cur_bird<-asort[i,]
   #identify its neighbor from the next row down
   next_bird<-cur_bird$nnidshift
-  
+  #If 
   if(cur_bird$UFID == next_bird){
     asort$recip[i]<-0
   } else {
       asort$recip[i]<-1
     }
 }
-#incorrect # of dimensions?
 
 
 
-#first find if there are reciprocal neighbors; this needs to be adjusted so I'm only
-#taking one bird out of a pair
-recip <- 0
-for(i in 1:nrow(asort)){
-  # take a point from flight a
-  cur_bird <- asort[i,]
-  # identify its nearest neighbor
-  nn_bird <- cur_bird$nnid2
-  # find nearest neighbor from flight b
-  nnid_bird <- asort[asort$UFID == nn_bird,]
-  #find the nearest neighbor of the cur_bird on the next line down
-  # if ITS nearest neighbor is point from flight a, add 1 to our count of nesting birds
-  if(nnid_bird$nnid2 == cur_bird$UFID){  
-    #    nesting_birds <- nesting_birds + 1
-    asort$recip[i] <- 0
-  } else {
-    asort$recip[i] <- 1
-  }
-}
-
-
-
-## This still does not pull one out of the pair
+## Now using the BS reciprocal code, pull out "attending mates" and outliers
 for(i in 1:nrow(asort)){
   if(asort$recip[i]==0 && asort$dist[i]<.74 || asort$dist[i]>1.85){
-    asort$temp[i]<-0
+    asort$nesting[i]<-0
   } else{
-    asort$temp[i]<-1
+    asort$nesting[i]<-1
   }
 }
 
