@@ -63,21 +63,16 @@ for(i in 1:nrow(asort)){
   }
 }
 
+## This still does not pull one out of the pair
 for(i in 1:nrow(asort)){
-  if(asort$recip==0 && asort$dist<.74){
+  if(asort$recip[i]==0 && asort$dist[i]<.74 || asort$dist[i]>1.85){
     asort$temp[i]<-0
   } else{
     asort$temp[i]<-1
   }
 }
 
-for(i in 1:nrow(asort)){
-  if(asort$temp==0 || asort$dist>1.85){
-    asort$nesting[i]<-0
-  } else{
-    asort$nesting[i]<-1
-  }
-}
+
 # Here is what it looks like when you you pull out just the "attending mate" (see nesting column) 
 #note that it still doesn't do a good job at predicting, but I think it makes the most sense to pull
 # attending mates and outliers out. 
