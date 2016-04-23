@@ -44,7 +44,26 @@ a$observed <- obs$Observed
 head(a)
 asort <- a[order(a$dist),] 
 
-#first find if there are reciprocal neighbors 
+##TEST a BS workaround
+asort$nnidshift<-asort$nnid2[c(2:length(asort$nnid2), 1)]
+for(i in 1:nrow(asort)){
+  #take a point
+  cur_bird<-asort$UFID[i,]
+  #identify its neighbor from the next row down
+  next_bird<-cur_bird$nnidshift
+  
+  if(cur_bird$UFID == next_bird){
+    asort$recip[i]<-0
+  } else {
+      asort$recip[i]<-1
+    }
+}
+#incorrect # of dimensions?
+
+
+
+#first find if there are reciprocal neighbors; this needs to be adjusted so I'm only
+#taking one bird out of a pair
 recip <- 0
 for(i in 1:nrow(asort)){
   # take a point from flight a
@@ -62,6 +81,8 @@ for(i in 1:nrow(asort)){
     asort$recip[i] <- 1
   }
 }
+
+
 
 ## This still does not pull one out of the pair
 for(i in 1:nrow(asort)){
