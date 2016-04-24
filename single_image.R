@@ -70,36 +70,60 @@ for(i in 1:nrow(asort)){
   }
 }
 
-
-# Here is what it looks like when you you pull out just the "attending mate" (see nesting column) 
-#note that it still doesn't do a good job at predicting, but I think it makes the most sense to pull
-# attending mates and outliers out. 
-excel<-read.csv("singleimage_testdata.csv")
-
-
-
-
+## Histogram of nearest neighbor distances, just for fun
+H<-hist(asort$dist)
+xfit<-seq(min(asort$dist),max(asort$dist),length=50) 
+yfit<-dnorm(xfit,mean=mean(asort$dist),sd=sd(asort$dist)) 
+yfit <- yfit*diff(H$mids[1:2])*length(asort$dist) 
+lines(xfit, yfit, lwd=2)
 ##########################################################################
+## Accuracy Assessment
 
 
+#calculate Kappa, sensitivity, specificty, auc for selected threshold value
+
+f<- as.data.frame(a)  #create a dataframe that can be used by package Presence Absence 
+
+f<-data.frame(f$UFID, f$observed, f$Nesting)
+
+cmx<-cmx(f, which.model=1)
+kappa<-Kappa(cmx)
+PCC<-pcc(cmx)
+sensitivity<-sensitivity(cmx)
+specificity<-specificity(cmx)
+auc<-auc(f)
+png("f4summary_Range_bnorth.png") ##Get ready to export the presence.absence.summary figure
+presence.absence.summary(f)
+dev.off() #Export the latest figure
+png("f4ROC_Range_bnorth.png")
+auc.roc.plot(f)
+dev.off()
 
 
+Rf4c<-data.frame(PCC,kappa, sensitivity, specificity, auc, colony="c", flight="f4", stringsAsFactors =FALSE )
 
-#add observed values
-obs<- read.csv("TestData/Observed_Values_C.csv")
-obs<-obs[ which(obs$Flight=="F4"), ] 
-a$observed <- obs$Observed
-head(a)
+ResultsFIX<-rbind(Rf4c)
 
+Resultsf4bnorth<-data.frame(kappa, sensitivity, specificity, auc, colony="bnorth", flight="f4", stringsAsFactors =FALSE )
 
-
-
+ResultsAll<-rbind(Resultsf4bsouth, Resultsf3bsouth, Resultsf1bsouth, Resultsf1bnorth, Resultsf3bnorth, Resultsf4bnorth)
+ResultsAll
+write.csv(ResultsAll,"SNNResults.csv")
 
 # Create some empty variables to store data in later:
 sens <- NULL
 spec <- NULL
 PCC <- NULL
 
+
+
+
+
+
+
+####### Find thresholds
+### What is the best way to find thresholds on both ends? 
+####Schaller 1964 range is 0.74-1.85m
 # Create a set of thresholds to compare:
 thresholds <- seq(0, max(a$dist), by=0.05)
 
@@ -133,38 +157,5 @@ Results$thresholds<-thresholds
 write.csv(Results,"SNNthesholds_bnorth_F4.csv")
 Results
 
-#create a new column in the my data with estimated nesters based on the minimum threshold value (where 
-#sensitivity, specificity, and PCC all equal 1, or specificity is maximized)
-#a$Nesting<-ifelse(a$dist<1.85, 1, 0) #I'm not really sure how to choose this threshold, Schaller 1964 range is 0.74-1.85m
-a$Nesting<-ifelse(a$dist<1.85 & a$dist>0.74, 1, 0) #Schaller 1964 nesting range is 0.74-1.85m
-head(a)
-
-#calculate Kappa, sensitivity, specificty, auc for selected threshold value
-
-f<- as.data.frame(a)  #create a dataframe that can be used by package Presence Absence 
-
-f<-data.frame(f$UFID, f$observed, f$Nesting)
-
-cmx<-cmx(f, which.model=1)
-kappa<-Kappa(cmx)
-PCC<-pcc(cmx)
-sensitivity<-sensitivity(cmx)
-specificity<-specificity(cmx)
-auc<-auc(f)
-png("f4summary_Range_bnorth.png") ##Get ready to export the presence.absence.summary figure
-presence.absence.summary(f)
-dev.off() #Export the latest figure
-png("f4ROC_Range_bnorth.png")
-auc.roc.plot(f)
-dev.off()
 
 
-Rf4c<-data.frame(PCC,kappa, sensitivity, specificity, auc, colony="c", flight="f4", stringsAsFactors =FALSE )
-
-ResultsFIX<-rbind(Rf4c)
-
-Resultsf4bnorth<-data.frame(kappa, sensitivity, specificity, auc, colony="bnorth", flight="f4", stringsAsFactors =FALSE )
-
-ResultsAll<-rbind(Resultsf4bsouth, Resultsf3bsouth, Resultsf1bsouth, Resultsf1bnorth, Resultsf3bnorth, Resultsf4bnorth)
-ResultsAll
-write.csv(ResultsAll,"SNNResults.csv")
