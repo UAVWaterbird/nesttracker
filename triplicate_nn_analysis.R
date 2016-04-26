@@ -8,9 +8,9 @@ library(PresenceAbsence)
 library(maptools)
 # Create spatial points data frames from flight 1, flight 3, and flight 4 shapefiles
 
-a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_SaddleSHIFT")
-b <- readOGR(dsn="./TestData", layer="AWPE_F3_400_SaddleSHIFT")
-c <- readOGR(dsn="./TestData", layer="AWPE_F1_400_Saddle")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffSouth")
+b <- readOGR(dsn="./TestData", layer="AWPE_F3_400_BluffSouthSHIFT")
+c <- readOGR(dsn="./TestData", layer="AWPE_F1_400_BluffSouth")
 
 triplicatenn <- function(a, b, c){
   # create spatial point pattern using as.ppp function in Spatstat
@@ -124,7 +124,7 @@ write.csv(a, "f4f3f1_nestpoints_bluffsouth.csv")
 ##################################################
 #####Accuracy Assessment 
 # Add observed values
-obs<- read.csv("TestData/Observed_Values_Saddle.csv")   ### MAKE SURE YOU ARE PULLING THE CORRECT FILE
+obs<- read.csv("TestData/Observed_Values_Bluffsouth.csv")   ### MAKE SURE YOU ARE PULLING THE CORRECT FILE
 obs<-obs[ which(obs$Flight=="F4"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
@@ -156,18 +156,19 @@ dev.off()
 
 
 ## Create (add to) results table 
-#Resultsf143saddle<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="saddle", flight="f1f4f3", stringsAsFactors =FALSE )
-#Resultsf341saddle<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="saddle", flight="f3f4f1", stringsAsFactors =FALSE )
-#Resultsf314saddle<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="saddle", flight="f3f1f4", stringsAsFactors =FALSE )
-#Resultsf413saddle<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="saddle", flight="f4f1f3", stringsAsFactors =FALSE )
-Resultsf431saddle<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="saddle", flight="f4f3f1", stringsAsFactors =FALSE )
+#Resultsf143bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f1f4f3", stringsAsFactors =FALSE )
+#Resultsf341bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f3f4f1", stringsAsFactors =FALSE )
+#Resultsf314bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f3f1f4", stringsAsFactors =FALSE )
+#Resultsf413bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f4f1f3", stringsAsFactors =FALSE )
+Resultsf431bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f4f3f1", stringsAsFactors =FALSE )
 
 ResultsAlltripfix<-rbind(Resultsf134c, Resultsf314c, Resultsf341c, Resultsf431c, Resultsf413c, Resultsf143c,
                          Resultsf143bsouth, Resultsf134bsouth, Resultsf314bsouth, Resultsf341bsouth, 
                          Resultsf431bsouth, Resultsf413bsouth, Resultsf413bnorth, Resultsf143bnorth, Resultsf341bnorth, 
                          Resultsf314bnorth, Resultsf134bnorth, Resultsf431bnorth, Resultsf431saddle, Resultsf413saddle, 
                          Resultsf314saddle, Resultsf341saddle, Resultsf143saddle, Resultsf134saddle, Resultsf134bluffn, 
-                         Resultsf143bluffn, Resultsf341bluffn, Resultsf314bluffn, Resultsf413bluffn, Resultsf431bluffn)
+                         Resultsf143bluffn, Resultsf341bluffn, Resultsf314bluffn, Resultsf413bluffn, Resultsf431bluffn, 
+                         Resultsf143bluffs, Resultsf341bluffs, Resultsf314bluffs, Resultsf413bluffs, Resultsf431bluffs)
 ResultsAlltripfix
 write.csv(ResultsAlltripfix, "TriplicateAccuracyResultsFIX.csv")
 
