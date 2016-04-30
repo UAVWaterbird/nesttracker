@@ -7,7 +7,7 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_C")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffSouth")
 
 pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
                                    yrange=c(a@bbox[2,1], a@bbox[2,2])))
@@ -19,14 +19,6 @@ stienen(pointsa)
 pointwhich<-nnwhich(pointsa)
 Z<- pointsa[pointwhich]
 arrows(pointsa$x, pointsa$y, Z$x, Z$y, angle=15, length=0.01,col="red")
-# find points which are the neighbour of their neighbour
-#Just screwing around 
-self <- (pointwhich[pointwhich] == seq(pointwhich))
-# plot them
-A <- pointsa[self]
-B <- pointsa[pointwhich[self]]
-plot(pointsa)
-segments(A$x, A$y, B$x, B$y)
 
 
 #calculate the nearest neighbor within the shapefile 
@@ -38,7 +30,7 @@ a$nnid2 <- a$UFID[nnwhich(pointsa)]
 
 #sort the points by nn distance
 # but first add observed values before sorting
-obs<- read.csv("TestData/Observed_Values_C.csv")
+obs<- read.csv("TestData/Observed_Values_BluffSouth.csv")
 obs<-obs[ which(obs$Flight=="F4"), ] 
 a$observed <- obs$Observed
 head(a)
@@ -58,8 +50,22 @@ for(i in 1:nrow(asort)){
       asort$recip[i]<-1
     }
 }
+head(asort)
 
+#### Select Thresholds
+# Method 1: Literature Schaller 1964, min= 0.74m, max 1.85m
+# Method 2: 95% quantiles
+quantile(a$dist,probs=c(.025,.975))
+  #plot threshold values on histogram
+qts <- quantile(a$dist,probs=c(.025,.975)) #quantile values
+lit<-c(.74, 1.85)                          #literature values
+hist(a$dist)
+abline(v=qts[1],col="red")
+abline(v=qts[2],col="red")
+abline(v=lit[1], col="blue")
+abline(v=lit[2], col="blue")
 
+# Method 3: threshold based off observed values
 
 ## Now using the BS reciprocal code, pull out "attending mates" and outliers
 for(i in 1:nrow(asort)){
@@ -69,6 +75,11 @@ for(i in 1:nrow(asort)){
     asort$nesting[i]<-1
   }
 }
+
+nestimate<-sum(asort$nesting)
+nestimate
+head(asort)
+
 
 ## Histogram of nearest neighbor distances, just for fun
 H<-hist(asort$dist)
@@ -82,9 +93,9 @@ lines(xfit, yfit, lwd=2)
 
 #calculate Kappa, sensitivity, specificty, auc for selected threshold value
 
-f<- as.data.frame(a)  #create a dataframe that can be used by package Presence Absence 
+f<- as.data.frame(asort)  #create a dataframe that can be used by package Presence Absence 
 
-f<-data.frame(f$UFID, f$observed, f$Nesting)
+f<-data.frame(f$UFID, f$observed, f$nesting)
 
 cmx<-cmx(f, which.model=1)
 kappa<-Kappa(cmx)
@@ -92,17 +103,25 @@ PCC<-pcc(cmx)
 sensitivity<-sensitivity(cmx)
 specificity<-specificity(cmx)
 auc<-auc(f)
-png("f4summary_Range_bnorth.png") ##Get ready to export the presence.absence.summary figure
+
+#png("f1summary_Range_bnorth.png") ##Get ready to export the presence.absence.summary figure
 presence.absence.summary(f)
-dev.off() #Export the latest figure
-png("f4ROC_Range_bnorth.png")
+#dev.off() #Export the latest figure
+#png("f4ROC_Range_bnorth.png")
 auc.roc.plot(f)
-dev.off()
+#dev.off()
 
+#Rf1bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f1", stringsAsFactors =FALSE )
+#Rf3bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f3", stringsAsFactors =FALSE )
+Rf4bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f4", stringsAsFactors =FALSE )
 
-Rf4c<-data.frame(PCC,kappa, sensitivity, specificity, auc, colony="c", flight="f4", stringsAsFactors =FALSE )
+ResultsMthd1<-rbind(Rf1c, Rf3c, Rf4c, Rf1bsouth, Rf3bsouth, Rf4bsouth, Rf1bnorth, Rf3north, 
+                    Rf4north, Rf1saddle, Rf3saddle, Rf4saddle, Rf1bluffn, Rf3bluffn, Rf4bluffn, 
+                    Rf1bluffs, Rf3bluffs, Rf4bluffs)
+ResultsMthd1
 
-ResultsFIX<-rbind(Rf4c)
+write.csv(ResultsMthd1, "SNN_Method1Lit_Results.csv")
+###########################
 
 Resultsf4bnorth<-data.frame(kappa, sensitivity, specificity, auc, colony="bnorth", flight="f4", stringsAsFactors =FALSE )
 
@@ -114,10 +133,6 @@ write.csv(ResultsAll,"SNNResults.csv")
 sens <- NULL
 spec <- NULL
 PCC <- NULL
-
-
-
-
 
 
 

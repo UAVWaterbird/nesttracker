@@ -4,13 +4,14 @@ install.packages("plyr")
 library(ggplot2)
 library(plyr)
 library(reshape2)
+library(gridExtra)
 
 setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Nesttracker\\nesttracker")
-test<-read.csv("test_data.csv")
+test<-read.csv("ALLresults_TEMP.csv")
 test
-observed <- test$Count[test$Count_Type=="Observed"]
-test <- subset(test, Count_Type != "Observed")
-test$Count_Type <- droplevels(test$Count_Type)
+#observed <- test$Count[test$Count_Type=="Observed"]
+#test <- subset(test, Count_Type != "Observed")
+#test$Count_Type <- droplevels(test$Count_Type)
 
 boxplot(Count ~ Count_Type, data=test, ylim=c(400, 900))
 abline(h=observed, lty=2)
@@ -77,23 +78,80 @@ arrows(barCenters, test.means$mean - test.means$se * 2, barCenters,
 
 ###############################################################################3
 #strip charts in ggplot2
+bsouth<-subset(test, test$colony=="bsouth")
+bnorth<-subset(test, test$colony=="bnorth")
+bluffs<-subset(test, test$colony=="bluffs")
+bluffn<-subset(test, test$colony=="bluffn")
+saddle<-subset(test, test$colony=="saddle")
+c<-subset(test, test$colony=="c")
 
-#using "test" data: all count methods ground and aerial 
-ggplot(test, aes(x=test$Count_Type, y= test$Count)) + geom_jitter()
-# Change the position
-# 0.3 : degree of jitter in x direction
 
-strip<-ggplot(test, aes(x=test$Count_Type, y= test$Count)) + 
+#bnorth strip
+strip1<-ggplot(bnorth, aes(x=bnorth$Method, y= bnorth$nestimate)) + 
   geom_jitter(position=position_jitter(0.3), size=2)
-strip
-#try it flipped
-stripflip<-strip + coord_flip()
-stripflip
+strip1
+  #add stats
+bnorth_groundVaerial<-strip1 + stat_summary(fun.y=mean, geom="point", shape=18,
+                                size=3, color="red") + ggtitle("B North Colony") +
+  labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = bnorth$Observed, linetype=2) #Add Observed Values 
+bnorth_groundVaerial
 
-#add some stats
-stripmean<-strip + stat_summary(fun.y=mean, geom="point", shape=18,
-             size=3, color="red") + ylim(0, 900)
-stripmean + geom_hline(yintercept = observed, linetype=2)
+#bsouth strip
+strip2<-ggplot(bsouth, aes(x=bsouth$Method, y= bsouth$nestimate)) + 
+  geom_jitter(position=position_jitter(0.3), size=2)
+strip2
+  #add stats
+bsouth_groundVaerial<-strip2 + stat_summary(fun.y=mean, geom="point", shape=18,
+                                size=3, color="red") + ggtitle("B South Colony") +
+  labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = bsouth$Observed, linetype=2) #Add Observed Values 
+bsouth_groundVaerial
+
+#bluffs strip
+strip3<-ggplot(bluffs, aes(x=bluffs$Method, y= bluffs$nestimate)) + 
+  geom_jitter(position=position_jitter(0.3), size=2)
+strip3
+  #add stats
+bluffs_groundVaerial<-strip3 + stat_summary(fun.y=mean, geom="point", shape=18,
+                                size=3, color="red") + ggtitle("Bluff South Colony") +
+  labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = bluffs$Observed, linetype=2) #Add Observed Values 
+bluffs_groundVaerial
+
+#bluffn strip
+strip4<-ggplot(bluffn, aes(x=bluffn$Method, y= bluffn$nestimate)) + 
+  geom_jitter(position=position_jitter(0.3), size=2)
+strip4
+  #add stats
+bluffn_groundVaerial<-strip4 + stat_summary(fun.y=mean, geom="point", shape=18,
+                                size=3, color="red") + ggtitle("Bluff North Colony") +
+  labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = bluffn$Observed, linetype=2) #Add Observed Values 
+bluffn_groundVaerial
+
+#saddle strip
+strip5<-ggplot(saddle, aes(x=saddle$Method, y= saddle$nestimate)) + 
+  geom_jitter(position=position_jitter(0.3), size=2)
+strip5
+  #add stats
+saddle_groundVaerial<-strip5 + stat_summary(fun.y=mean, geom="point", shape=18,
+                                size=3, color="red") + ggtitle("Saddle Colony") +
+  labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = saddle$Observed, linetype=2) #Add Observed Values 
+saddle_groundVaerial
+
+#c strip
+strip6<-ggplot(c, aes(x=c$Method, y= c$nestimate)) + 
+  geom_jitter(position=position_jitter(0.3), size=2)
+strip6
+  #add stats
+c_groundVaerial<-strip6 + stat_summary(fun.y=mean, geom="point", shape=18,
+                                size=3, color="red") + ggtitle("C Colony") +
+  labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = c$Observed, linetype=2) #Add Observed Values 
+c_groundVaerial
+
+
+#put all colonies together
+
+
+grid.arrange(bnorth_groundVaerial, bsouth_groundVaerial, bluffs_groundVaerial, bluffn_groundVaerial, saddle_groundVaerial, c_groundVaerial, ncol=2)
+
 
 
 # stripchart using kappa stats
