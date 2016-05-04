@@ -192,7 +192,7 @@ kappastats
 PCCstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$PCC))) + 
   geom_boxplot()  + ggtitle("Percent Correctly Classified by Method") +
   labs(x="Method",y="PCC") +geom_jitter(shape=16, position=position_jitter(0.2))
-PCCstats
+PCCstats + ylim(0,1)
 
   #Sensitivity
 sensstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$sensitivity))) + 
@@ -225,7 +225,7 @@ test1<-test[test$Method1%in%c("SameDay","AcrossDay"),]
 kappastats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$Kappa))) + 
   geom_boxplot()  + ggtitle("Kappa") +
   labs(x="Method",y="Kappa Score") +geom_jitter(shape=16, position=position_jitter(0.2))
-kappastats1
+kappastats1 + ylim(0,1)
 
 #PCC
 PCCstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$PCC))) + 
