@@ -9,6 +9,12 @@ library(gridExtra)
 setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Nesttracker\\nesttracker")
 test<-read.csv("ALLresults_TEMP.csv")
 test
+test$NestimateStd<-test$nestimate/test$Observed
+test$order<-ifelse(test$Method=="Single",1,
+       ifelse(test$Method=="Double", 2,
+              ifelse(test$Method=="Triple",3,"na")))
+as.factor(test$order)
+
 #observed <- test$Count[test$Count_Type=="Observed"]
 #test <- subset(test, Count_Type != "Observed")
 #test$Count_Type <- droplevels(test$Count_Type)
@@ -40,15 +46,16 @@ x2 + geom_point(position = position_jitter(width = 0.2)) +
 # test some barplot code
 #http://www.r-bloggers.com/building-barplots-with-error-bars/
 
-test.means <- aggregate(test$Count,
-                    by = list(method = test$Count_Type),
+
+test.means <- aggregate(test$NestimateStd,
+                    by = list(method = test$Method3),
                     FUN = function(x) c(mean = mean(x), sd = sd(x),
                                         n = length(x)))
 
 test.means <- do.call(data.frame, test.means)
 test.means$se <- test.means$x.sd / sqrt(test.means$x.n)
-colnames(test.means) <- c("Count_Type", "mean", "sd", "n", "se")
-test.means$names <- c(paste(test.means$Count_Type))
+colnames(test.means) <- c("Method", "mean", "sd", "n", "se")
+test.means$names <- c(paste(test.means$Method))
 
 
 plotTop <- max(test.means$mean) +
@@ -59,14 +66,14 @@ barCenters <- barplot(height = test.means$mean,
                       beside = true, las = 2,
                       ylim = c(0, plotTop),
                       cex.names = 0.75, xaxt = "n",
-                      main = "Estimated Number of Active Nests by Method",
+                      main = "Estimated Number of Active Nests: Ground vs. UAS",
                       ylab = "Count of Active Nests",
                       border = "black", axes = TRUE)
 
 # Specify the groupings. We use srt = 45 for a
 # 45 degree string rotation
 text(x = barCenters, y = par("usr")[1] - 0, srt = 0,
-     adj = c(0.5,2), labels = test.means$names, xpd = TRUE)
+     adj = c(0.5,3), labels = test.means$names, xpd = TRUE)
 
 segments(barCenters, test.means$mean - test.means$se * 2, barCenters,
          test.means$mean + test.means$se * 2, lwd = 1.5)
@@ -91,78 +98,150 @@ strip1<-ggplot(bnorth, aes(x=bnorth$Method, y= bnorth$nestimate)) +
   geom_jitter(position=position_jitter(0.3), size=2)
 strip1
   #add stats
-bnorth_groundVaerial<-strip1 + stat_summary(fun.y=mean, geom="point", shape=18,
+bnorth_aerial<-strip1 + stat_summary(fun.y=mean, geom="point", shape=18,
                                 size=3, color="red") + ggtitle("B North Colony") +
   labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = bnorth$Observed, linetype=2) #Add Observed Values 
-bnorth_groundVaerial
+bnorth_aerial
 
 #bsouth strip
 strip2<-ggplot(bsouth, aes(x=bsouth$Method, y= bsouth$nestimate)) + 
   geom_jitter(position=position_jitter(0.3), size=2)
 strip2
   #add stats
-bsouth_groundVaerial<-strip2 + stat_summary(fun.y=mean, geom="point", shape=18,
+bsouth_aerial<-strip2 + stat_summary(fun.y=mean, geom="point", shape=18,
                                 size=3, color="red") + ggtitle("B South Colony") +
   labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = bsouth$Observed, linetype=2) #Add Observed Values 
-bsouth_groundVaerial
+bsouth_aerial
 
 #bluffs strip
 strip3<-ggplot(bluffs, aes(x=bluffs$Method, y= bluffs$nestimate)) + 
   geom_jitter(position=position_jitter(0.3), size=2)
 strip3
   #add stats
-bluffs_groundVaerial<-strip3 + stat_summary(fun.y=mean, geom="point", shape=18,
+bluffs_aerial<-strip3 + stat_summary(fun.y=mean, geom="point", shape=18,
                                 size=3, color="red") + ggtitle("Bluff South Colony") +
   labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = bluffs$Observed, linetype=2) #Add Observed Values 
-bluffs_groundVaerial
+bluffs_aerial
 
 #bluffn strip
 strip4<-ggplot(bluffn, aes(x=bluffn$Method, y= bluffn$nestimate)) + 
   geom_jitter(position=position_jitter(0.3), size=2)
 strip4
   #add stats
-bluffn_groundVaerial<-strip4 + stat_summary(fun.y=mean, geom="point", shape=18,
+bluffn_aerial<-strip4 + stat_summary(fun.y=mean, geom="point", shape=18,
                                 size=3, color="red") + ggtitle("Bluff North Colony") +
   labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = bluffn$Observed, linetype=2) #Add Observed Values 
-bluffn_groundVaerial
+bluffn_aerial
 
 #saddle strip
 strip5<-ggplot(saddle, aes(x=saddle$Method, y= saddle$nestimate)) + 
   geom_jitter(position=position_jitter(0.3), size=2)
 strip5
   #add stats
-saddle_groundVaerial<-strip5 + stat_summary(fun.y=mean, geom="point", shape=18,
+saddle_aerial<-strip5 + stat_summary(fun.y=mean, geom="point", shape=18,
                                 size=3, color="red") + ggtitle("Saddle Colony") +
   labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = saddle$Observed, linetype=2) #Add Observed Values 
-saddle_groundVaerial
+saddle_aerial
 
 #c strip
 strip6<-ggplot(c, aes(x=c$Method, y= c$nestimate)) + 
   geom_jitter(position=position_jitter(0.3), size=2)
 strip6
   #add stats
-c_groundVaerial<-strip6 + stat_summary(fun.y=mean, geom="point", shape=18,
+c_aerial<-strip6 + stat_summary(fun.y=mean, geom="point", shape=18,
                                 size=3, color="red") + ggtitle("C Colony") +
   labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = c$Observed, linetype=2) #Add Observed Values 
-c_groundVaerial
+c_aerial
 
 
 #put all colonies together
+grid.arrange(bnorth_aerial, bsouth_aerial, bluffs_aerial, bluffn_aerial, saddle_aerial, c_aerial, ncol=2)
+
+#For all colonies 
+stripAll<-ggplot(test, aes(x=test$Method, y= test$NestimateStd)) + 
+  geom_jitter(position=position_jitter(0.3), size=2)
+stripAll
+#add stats
+All_aerial<-stripAll + stat_summary(fun.y=mean, geom="point", shape=18,
+                                            size=3, color="red") + ggtitle("Nest Estimates Standardized Across Colonies") +
+  labs(x="Method",y="Nesting Bird Estimate") + geom_hline(yintercept = 1, linetype=2)
+All_aerial
 
 
-grid.arrange(bnorth_groundVaerial, bsouth_groundVaerial, bluffs_groundVaerial, bluffn_groundVaerial, saddle_groundVaerial, c_groundVaerial, ncol=2)
+#######################################################################################################
+
+# Boxplots of stats 
+test<-read.csv("ALLresults_TEMP.csv")
+test
+
+test$Method <- factor(test$Method, levels = test$Method[order(test$order)])
+  #Kappa
+kappastats<-ggplot(test, aes(x=test$Method, y= test$Kappa)) + 
+  geom_boxplot()  + ggtitle("Kappa by Method") +
+  labs(x="Method",y="Kappa Score") +geom_jitter(shape=16, position=position_jitter(0.2))
+kappastats
+
+  #PCC
+PCCstats<-ggplot(test, aes(x=test$Method, y= test$PCC)) + 
+  geom_boxplot()  + ggtitle("Percent Correctly Classified by Method") +
+  labs(x="Method",y="PCC") +geom_jitter(shape=16, position=position_jitter(0.2))
+PCCstats
+
+  #Sensitivity
+sensstats<-ggplot(test, aes(x=test$Method, y= test$sensitivity)) + 
+  geom_boxplot()  + ggtitle("Sensitivity by Method") +
+  labs(x="Method",y="Sensitivity") +geom_jitter(shape=16, position=position_jitter(0.2))
+sensstats
+
+  #Specificity
+specstats<-ggplot(test, aes(x=test$Method, y= test$specificity)) + 
+  geom_boxplot()  + ggtitle("Specificity by Method") +
+  labs(x="Method",y="Specificity") +geom_jitter(shape=16, position=position_jitter(0.2))
+specstats
+
+  #AUC
+aucstats<-ggplot(test, aes(x=test$Method, y= test$AUC)) + 
+  geom_boxplot()  + ggtitle("Area Under the Curve Scores by Method") +
+  labs(x="Method",y="AUC") +geom_jitter(shape=16, position=position_jitter(0.2))
+aucstats
+
+#Grid of all statistics
+grid.arrange(kappastats, PCCstats, sensstats, specstats, aucstats, ncol=2)
+
+######################################################################################################
+# Boxplots of stats for within day vs. across 2 days 
+test1<-read.csv("ALLresults_TEMP.csv")
+test1<-subset(test1[ which(test1$Method1=='SameDay',test$Method1=='AcrossDay'), ])
+
+
+#Kappa
+kappastats1<-ggplot(test, aes(x=test$Method1, y= test$Kappa)) + 
+  geom_boxplot()  + ggtitle("Kappa") +
+  labs(x="Method",y="Kappa Score") +geom_jitter(shape=16, position=position_jitter(0.2))
+kappastats1
+###########################################################################################
+# Display count method (ground v UAS) by percent error
+
+Errors<-read.csv("Errormeans.csv")
+
+Method<-Errors$Method
+
+PctError <- ggplot(Errors, aes(colour=Method, y=Errors$mean, x=Errors$Colony)) + geom_point()
+PctError
+
+limits <- aes(ymax = Errors$mean + Errors$sd, ymin=Errors$mean - Errors$sd)
+
+#Change colors to color blind friendly (http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/)
+PctError+ geom_point(size=3) + geom_errorbar(limits, width=0.2, size=1) +
+  labs(x="Colony",y="Percent Error") + scale_fill_discrete(name="Method")
+#OR
+PctError <- ggplot(Errors, aes(shape=Method, y=Errors$mean, x=Errors$Colony)) + geom_point()
+PctError
+PctError+ geom_point(size=4) + geom_errorbar(limits, width=0.1, size=1) +
+  labs(x="Colony",y="Percent Error") + scale_fill_discrete(name="Method")
 
 
 
-# stripchart using kappa stats
-test2<-read.csv("test_data2.csv")
-test2
-stripstats<-ggplot(test2, aes(x=test2$Method, y= test2$Kappa)) + 
-  geom_jitter(position=position_jitter(0.3), size=4)
-stripstats + ylim(0, 1)
 
-test3<-read.csv("test_data3.csv")
-test3
-stripstats2<-ggplot(test3, aes(x=test3$Stat, y= test3$X3image)) + 
-  geom_jitter(position=position_jitter(0.3), size=4)
-stripstats2
+
+
