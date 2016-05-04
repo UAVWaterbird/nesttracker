@@ -171,36 +171,43 @@ All_aerial
 #######################################################################################################
 
 # Boxplots of stats 
-test<-read.csv("ALLresults_TEMP.csv")
+test<-read.csv("ALLresults_TEMP.csv", stringsAsFactors = FALSE)
 test
-
+#remove na values 
+test<-subset(test[which(test$Kappa!="na"),])
+#Order the Method by Single, Double, Triple instead of alphabetically
+test$order<-ifelse(test$Method=="Single",1,
+                   ifelse(test$Method=="Double", 2,
+                          ifelse(test$Method=="Triple",3,"na")))
+as.factor(test$order)
 test$Method <- factor(test$Method, levels = test$Method[order(test$order)])
+  
   #Kappa
-kappastats<-ggplot(test, aes(x=test$Method, y= test$Kappa)) + 
+kappastats<-ggplot(test, aes(x=test$Method, y=as.numeric(test$Kappa))) + 
   geom_boxplot()  + ggtitle("Kappa by Method") +
   labs(x="Method",y="Kappa Score") +geom_jitter(shape=16, position=position_jitter(0.2))
 kappastats
 
   #PCC
-PCCstats<-ggplot(test, aes(x=test$Method, y= test$PCC)) + 
+PCCstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$PCC))) + 
   geom_boxplot()  + ggtitle("Percent Correctly Classified by Method") +
   labs(x="Method",y="PCC") +geom_jitter(shape=16, position=position_jitter(0.2))
 PCCstats
 
   #Sensitivity
-sensstats<-ggplot(test, aes(x=test$Method, y= test$sensitivity)) + 
+sensstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$sensitivity))) + 
   geom_boxplot()  + ggtitle("Sensitivity by Method") +
   labs(x="Method",y="Sensitivity") +geom_jitter(shape=16, position=position_jitter(0.2))
 sensstats
 
   #Specificity
-specstats<-ggplot(test, aes(x=test$Method, y= test$specificity)) + 
+specstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$specificity))) + 
   geom_boxplot()  + ggtitle("Specificity by Method") +
   labs(x="Method",y="Specificity") +geom_jitter(shape=16, position=position_jitter(0.2))
 specstats
 
   #AUC
-aucstats<-ggplot(test, aes(x=test$Method, y= test$AUC)) + 
+aucstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$AUC))) + 
   geom_boxplot()  + ggtitle("Area Under the Curve Scores by Method") +
   labs(x="Method",y="AUC") +geom_jitter(shape=16, position=position_jitter(0.2))
 aucstats
@@ -210,15 +217,42 @@ grid.arrange(kappastats, PCCstats, sensstats, specstats, aucstats, ncol=2)
 
 ######################################################################################################
 # Boxplots of stats for within day vs. across 2 days 
-test1<-read.csv("ALLresults_TEMP.csv")
-test1<-subset(test1[ which(test1$Method1=='SameDay',test$Method1=='AcrossDay'), ])
+
+test1<-test[test$Method1%in%c("SameDay","AcrossDay"),]
 
 
 #Kappa
-kappastats1<-ggplot(test, aes(x=test$Method1, y= test$Kappa)) + 
+kappastats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$Kappa))) + 
   geom_boxplot()  + ggtitle("Kappa") +
   labs(x="Method",y="Kappa Score") +geom_jitter(shape=16, position=position_jitter(0.2))
 kappastats1
+
+#PCC
+PCCstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$PCC))) + 
+  geom_boxplot()  + ggtitle("Percent Correctly Classified") +
+  labs(x="Method",y="PCC") +geom_jitter(shape=16, position=position_jitter(0.2))
+PCCstats1
+
+#Sensitivity
+sensstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$sensitivity))) + 
+  geom_boxplot()  + ggtitle("Sensitivity") +
+  labs(x="Method",y="Sensitivity") +geom_jitter(shape=16, position=position_jitter(0.2))
+sensstats1
+
+#Specificity
+specstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$specificity))) + 
+  geom_boxplot()  + ggtitle("Specificity") +
+  labs(x="Method",y="Specificity") +geom_jitter(shape=16, position=position_jitter(0.2))
+specstats1
+
+#AUC
+aucstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$AUC))) + 
+  geom_boxplot()  + ggtitle("Area Under the Curve Scores") +
+  labs(x="Method",y="AUC") +geom_jitter(shape=16, position=position_jitter(0.2))
+aucstats1
+
+#Grid of all statistics
+grid.arrange(kappastats1, PCCstats1, sensstats1, specstats1, aucstats1, ncol=2)
 ###########################################################################################
 # Display count method (ground v UAS) by percent error
 
