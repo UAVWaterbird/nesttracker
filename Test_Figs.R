@@ -187,34 +187,42 @@ kappastats<-ggplot(test, aes(x=test$Method, y=as.numeric(test$Kappa))) +
   geom_boxplot()  + ggtitle("Kappa by Method") +
   labs(x="Method",y="Kappa Score") +geom_jitter(shape=16, position=position_jitter(0.2))
 kappastats
-
+kappastats01<-kappastats + ylim(0,1)
+kappastats01
   #PCC
 PCCstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$PCC))) + 
   geom_boxplot()  + ggtitle("Percent Correctly Classified by Method") +
   labs(x="Method",y="PCC") +geom_jitter(shape=16, position=position_jitter(0.2))
-PCCstats + ylim(0,1)
-
+PCCstats
+PCCstats01<-PCCstats + ylim(0,1)
+PCCstats01
   #Sensitivity
 sensstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$sensitivity))) + 
   geom_boxplot()  + ggtitle("Sensitivity by Method") +
   labs(x="Method",y="Sensitivity") +geom_jitter(shape=16, position=position_jitter(0.2))
 sensstats
-
+sensstats01<-sensstats + ylim(0,1)
+sensstats01
   #Specificity
 specstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$specificity))) + 
   geom_boxplot()  + ggtitle("Specificity by Method") +
   labs(x="Method",y="Specificity") +geom_jitter(shape=16, position=position_jitter(0.2))
 specstats
+specstats01<-specstats + ylim(0,1)
+specstats01
 
   #AUC
 aucstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$AUC))) + 
   geom_boxplot()  + ggtitle("Area Under the Curve Scores by Method") +
   labs(x="Method",y="AUC") +geom_jitter(shape=16, position=position_jitter(0.2))
 aucstats
+aucstats01<-aucstats + ylim(0,1)
+aucstats01
 
 #Grid of all statistics
 grid.arrange(kappastats, PCCstats, sensstats, specstats, aucstats, ncol=2)
-
+# Grid with ylim 0,1
+grid.arrange(kappastats01, PCCstats01, sensstats01, specstats01, aucstats01, ncol=2)
 ######################################################################################################
 # Boxplots of stats for within day vs. across 2 days 
 
@@ -225,34 +233,45 @@ test1<-test[test$Method1%in%c("SameDay","AcrossDay"),]
 kappastats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$Kappa))) + 
   geom_boxplot()  + ggtitle("Kappa") +
   labs(x="Method",y="Kappa Score") +geom_jitter(shape=16, position=position_jitter(0.2))
-kappastats1 + ylim(0,1)
-
+kappastats1
+kappastats101<-kappastats1 + ylim(0,1)
+kappastats101
 #PCC
 PCCstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$PCC))) + 
   geom_boxplot()  + ggtitle("Percent Correctly Classified") +
   labs(x="Method",y="PCC") +geom_jitter(shape=16, position=position_jitter(0.2))
 PCCstats1
-
+PCCstats101<-PCCstats1 + ylim(0,1)
+PCCstats101
 #Sensitivity
 sensstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$sensitivity))) + 
   geom_boxplot()  + ggtitle("Sensitivity") +
   labs(x="Method",y="Sensitivity") +geom_jitter(shape=16, position=position_jitter(0.2))
 sensstats1
+sensstats101<-sensstats1 + ylim(0,1)
+sensstats101
 
 #Specificity
 specstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$specificity))) + 
   geom_boxplot()  + ggtitle("Specificity") +
   labs(x="Method",y="Specificity") +geom_jitter(shape=16, position=position_jitter(0.2))
 specstats1
+specstats101<-specstats1 + ylim(0,1)
+specstats101
 
 #AUC
 aucstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$AUC))) + 
   geom_boxplot()  + ggtitle("Area Under the Curve Scores") +
   labs(x="Method",y="AUC") +geom_jitter(shape=16, position=position_jitter(0.2))
 aucstats1
+aucstats101<-aucstats1 + ylim(0,1)
+aucstats101
 
 #Grid of all statistics
 grid.arrange(kappastats1, PCCstats1, sensstats1, specstats1, aucstats1, ncol=2)
+# Grid when scaled to 0,1
+grid.arrange(kappastats101, PCCstats101, sensstats101, specstats101, aucstats101, ncol=2)
+
 ###########################################################################################
 # Display count method (ground v UAS) by percent error
 
@@ -278,4 +297,18 @@ PctError+ geom_point(size=4) + geom_errorbar(limits, width=0.1, size=1) +
 
 
 
+
+#if you just want the background, do theme(panel.background = element_rect(colour = 'white')
+
+#theme(axis.text=element_text(size=20, colour = 'black'),
+ #     axis.title=element_text(size=24, colour = 'black'),
+  #    axis.line.x = element_line(size = 1, colour = 'black'),
+   #   axis.line.y = element_line(size = 1, colour = 'black'),
+    #  axis.ticks = element_line(size = 1, colour = 'black'),
+     # axis.ticks.length = unit(.3, 'cm'),
+     # panel.background = element_rect(fill = 'white'),
+    #  legend.background = element_rect(colour = 'white'),
+    #  legend.key = element_rect(fill = 'white'),
+    #  legend.text = element_text(size = 20),
+    #  legend.key.size = unit(1.5, "cm")) 
 
