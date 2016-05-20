@@ -1,6 +1,8 @@
 ## Spatial Accuracy Assessment for colony rasters
 ## Using FGDC standards for horizontal accuracy assessment: RMSE, NSSDA (95% Credible Level), n=20
 
+## I should probably just write a function to clean this up
+
 accbsouth3<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Bsouth_f3.txt", sep=",", header=TRUE)
 accbsouth3
 
@@ -28,6 +30,27 @@ accc1
 accc4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\C_f4.txt", sep=",", header=TRUE)
 accc4
 
+accsad3<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Saddle_f3.txt", sep=",", header=TRUE)
+accsad3
+
+accsad1<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Saddle_f1.txt", sep=",", header=TRUE)
+accsad1
+
+accsad4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Saddle_f4.txt", sep=",", header=TRUE)
+accsad4
+
+accslop3<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\SSlope_f3.txt", sep=",", header=TRUE)
+accslop3
+
+accslop1<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\SSlope_f1.txt", sep=",", header=TRUE)
+accslop1
+
+accslop4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\SSlope_f4.txt", sep=",", header=TRUE)
+accslop4
+
+
+
+## B South Colony
 #Relative horizontal positional accuracy between B south f3 to f1
 acc31<-accbsouth3
 acc31$xtest<-accbsouth1$X
@@ -159,7 +182,7 @@ RMSE
 NSSDA
 Rc31<-data.frame(RMSE, NSSDA, colony="C", flights="1 and 2", stringsAsFactors =FALSE )
 
-#Relative horizontal positional accuracy between B south f3 to f4
+#Relative horizontal positional accuracy between C f3 to f4
 acc34<-accc3
 acc34$xtest<-accc4$X
 acc34$ytest<-accc4$Y
@@ -176,7 +199,7 @@ RMSE
 NSSDA
 Rc34<-data.frame(RMSE, NSSDA, colony="C", flights="2 and 3", stringsAsFactors =FALSE )
 
-#Relative horizontal positional accuracy between B south f1 to f4
+#Relative horizontal positional accuracy between C f1 to f4
 acc14<-accc1
 acc14$xtest<-accc4$X
 acc14$ytest<-accc4$Y
@@ -195,9 +218,117 @@ Rc14<-data.frame(RMSE, NSSDA, colony="C", flights="1 and 3", stringsAsFactors =F
 
 
 
+## Saddle colony
+#Relative horizontal positional accuracy between Saddle f3 to f1
+acc31<-accsad3
+acc31$xtest<-accsad1$X
+acc31$ytest<-accsad1$Y
+acc31$xdif<-acc31$X-acc31$xtest
+acc31$ydif<-acc31$Y-acc31$ytest
+acc31$xdif2<-(acc31$xdif)^2
+acc31$ydif2<-(acc31$ydif)^2
+acc31$x2y2<-acc31$xdif2+acc31$ydif2
+
+
+RMSE<-sqrt(sum(acc31$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rsad31<-data.frame(RMSE, NSSDA, colony="Saddle", flights="1 and 2", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between Saddle f3 to f4
+acc34<-accsad3
+acc34$xtest<-accsad4$X
+acc34$ytest<-accsad4$Y
+acc34$xdif<-acc34$X-acc34$xtest
+acc34$ydif<-acc34$Y-acc34$ytest
+acc34$xdif2<-(acc34$xdif)^2
+acc34$ydif2<-(acc34$ydif)^2
+acc34$x2y2<-acc34$xdif2+acc34$ydif2
+
+
+RMSE<-sqrt(sum(acc34$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rsad34<-data.frame(RMSE, NSSDA, colony="Saddle", flights="2 and 3", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between Saddle f1 to f4
+acc14<-accsad1
+acc14$xtest<-accsad4$X
+acc14$ytest<-accsad4$Y
+acc14$xdif<-acc14$X-acc14$xtest
+acc14$ydif<-acc14$Y-acc14$ytest
+acc14$xdif2<-(acc14$xdif)^2
+acc14$ydif2<-(acc14$ydif)^2
+acc14$x2y2<-acc14$xdif2+acc14$ydif2
+
+
+RMSE<-sqrt(sum(acc14$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rsad14<-data.frame(RMSE, NSSDA, colony="Saddle", flights="1 and 3", stringsAsFactors =FALSE )
+
+
+## South Slope Colony
+
+#Relative horizontal positional accuracy between Soout Slope f3 to f1
+acc31<-accslop3
+acc31$xtest<-accslop1$X
+acc31$ytest<-accslop1$Y
+acc31$xdif<-acc31$X-acc31$xtest
+acc31$ydif<-acc31$Y-acc31$ytest
+acc31$xdif2<-(acc31$xdif)^2
+acc31$ydif2<-(acc31$ydif)^2
+acc31$x2y2<-acc31$xdif2+acc31$ydif2
+
+
+RMSE<-sqrt(sum(acc31$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rslop31<-data.frame(RMSE, NSSDA, colony="South Slope", flights="1 and 2", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between South Slope f3 to f4
+acc34<-accslop3
+acc34$xtest<-accslop4$X
+acc34$ytest<-accslop4$Y
+acc34$xdif<-acc34$X-acc34$xtest
+acc34$ydif<-acc34$Y-acc34$ytest
+acc34$xdif2<-(acc34$xdif)^2
+acc34$ydif2<-(acc34$ydif)^2
+acc34$x2y2<-acc34$xdif2+acc34$ydif2
+
+
+RMSE<-sqrt(sum(acc34$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rslop34<-data.frame(RMSE, NSSDA, colony="South Slope", flights="2 and 3", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between South Slope f1 to f4
+acc14<-accslop1
+acc14$xtest<-accslop4$X
+acc14$ytest<-accslop4$Y
+acc14$xdif<-acc14$X-acc14$xtest
+acc14$ydif<-acc14$Y-acc14$ytest
+acc14$xdif2<-(acc14$xdif)^2
+acc14$ydif2<-(acc14$ydif)^2
+acc14$x2y2<-acc14$xdif2+acc14$ydif2
+
+
+RMSE<-sqrt(sum(acc14$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rslop14<-data.frame(RMSE, NSSDA, colony="South Slope", flights="1 and 3", stringsAsFactors =FALSE )
 
 
 
-Accuracy_Results<-rbind(Rbs31, Rbs34, Rbs14, Rbn31, Rbn34, Rbn14, Rc31, Rc34, Rc14)
+
+
+Accuracy_Results<-rbind(Rbs31, Rbs34, Rbs14, Rbn31, Rbn34, Rbn14, Rc31, Rc34, Rc14, Rsad31, Rsad34, Rsad14, 
+                        Rslop31, Rslop34, Rslop14)
 Accuracy_Results
 write.csv(Accuracy_Results, "C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Relative_HP_Accuracy_Results.csv")
