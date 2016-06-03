@@ -8,9 +8,9 @@ library(PresenceAbsence)
 library(maptools)
 # Create spatial points data frames from flight 1, flight 3, and flight 4 shapefiles
 
-a <- readOGR(dsn="./TestData", layer="AWPE_F1_400_SSlopeSHIFT")
-b <- readOGR(dsn="./TestData", layer="AWPE_F3_400_SSlope")
-c <- readOGR(dsn="./TestData", layer="AWPE_F4_300_SSlopeSHIFT")
+c <- readOGR(dsn="./TestData", layer="AWPE_F1_400_BluffNorth")
+a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_BluffNorth")
+b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffNorth")
 
 triplicatenn <- function(a, b, c){
   # create spatial point pattern using as.ppp function in Spatstat
@@ -124,8 +124,8 @@ write.csv(a, "f1f3f4_nestpoints_sslope.csv")
 ##################################################
 #####Accuracy Assessment 
 # Add observed values
-obs<- read.csv("TestData/Observed_Values_Bluffsouth.csv")   ### MAKE SURE YOU ARE PULLING THE CORRECT FILE
-obs<-obs[ which(obs$Flight=="F1"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
+obs<- read.csv("TestData/Observed_Values_Bluffnorth.csv")   ### MAKE SURE YOU ARE PULLING THE CORRECT FILE
+obs<-obs[ which(obs$Flight=="F3"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
 head(a)

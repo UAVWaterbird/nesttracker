@@ -83,6 +83,16 @@ arrows(barCenters, test.means$mean - test.means$se * 2, barCenters,
        code = 3, length = 0.05)
 
 
+### comparisons of mean totals from ground, ground image, and uas
+
+adultmeans<-read.csv("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\GroundCount_Comparison\\TotalMeans.csv")
+limits<-aes(ymax=adultsmeans$Mean + adultmeans$SD, ymin = adultmeans$Mean - adultmeans$SD)
+dodge<-position_dodge(width=0.9)
+am<-ggplot(adultsmeans, aes(fill=adultmeans$Method, y=adultmeans$Mean, x=adultmeans$Colony, ordered=T))
+am + geom_bar(stat="identity", position="dodge") + geom_errorbar(limits, position =dodge, width = 0.25)
+#that's kind of ugly...
+
+
 ###############################################################################3
 #strip charts in ggplot2
 bsouth<-subset(test, test$colony=="bsouth")
@@ -276,26 +286,42 @@ grid.arrange(kappastats101, PCCstats101, sensstats101, specstats101, aucstats101
 # Display count method (ground v UAS) by percent error
 
 Errors<-read.csv("Errormeans.csv")
+errors1<-Errors[Errors$Method%in%c("ground"),]
+errors2<-Errors[Errors$Method%in%c("groundimage"),]
+errors3<-Errors[Errors$Method%in%c("UAS"),]
+limits1 <- aes(ymax = errors1$mean + errors1$sd, ymin=errors1$mean - errors1$sd)
+limits2 <- aes(ymax = errors2$mean + errors2$sd, ymin=errors2$mean - errors2$sd)
+limits3 <- aes(ymax = errors3$mean + errors3$sd, ymin=errors3$mean - errors3$sd)
 
-Method<-Errors$Method
+PctError1 <- ggplot(errors1, aes(y=errors1$mean, x=errors1$Colony)) + geom_point(shape = 16, size=3) + 
+  geom_errorbar(limits1, width = 0.2) + labs(title="Ground Count", 
+                                             x = "Colony", y = "Percent Error from Observed") + scale_y_continuous(limits = c(0,50))
+PctError1
 
-PctError <- ggplot(Errors, aes(colour=Method, y=Errors$mean, x=Errors$Colony)) + geom_point()
-PctError
+PctError2 <- ggplot(errors2, aes(y=errors2$mean, x=errors2$Colony)) + geom_point(shape = 15, size=3) + 
+  geom_errorbar(limits2, width = 0.2) + labs(title="Ground Image", x = "Colony", y = "Percent Error from Observed")+ scale_y_continuous(limits = c(0,50))
+PctError2
 
-limits <- aes(ymax = Errors$mean + Errors$sd, ymin=Errors$mean - Errors$sd)
+PctError3 <- ggplot(errors3, aes(y=errors3$mean, x=errors3$Colony)) + geom_point(shape = 18, size=3) + 
+  geom_errorbar(limits3, width = 0.2) + labs(title="UAS", x = "Colony", y = "Percent Error from Observed") + scale_y_continuous(limits = c(0,50))
+PctError3
 
-#Change colors to color blind friendly (http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/)
-PctError+ geom_point(size=3) + geom_errorbar(limits, width=0.2, size=1) +
-  labs(x="Colony",y="Percent Error") + scale_fill_discrete(name="Method")
-#OR
-PctError <- ggplot(Errors, aes(shape=Method, y=Errors$mean, x=Errors$Colony)) + geom_point()
-PctError
-PctError+ geom_point(size=4) + geom_errorbar(limits, width=0.1, size=1) +
-  labs(x="Colony",y="Percent Error") + scale_fill_discrete(name="Method")
+grid.arrange(PctError1, PctError2, PctError3, ncol=3)
+#############################################################################################
 
+#Boxplots to compare Kappa means by flight intervals
 
+daycomp<-read.csv("TwoDayResults_TEMP.csv")
 
+tH<-subset(daycomp, daycomp$Method == "2hours")
+tfH<-subset(daycomp, daycomp$Method == "24hours")
+tsH<-subset(daycomp, daycomp$Method == "26hours")
 
+par(mfrow=c(1,3))
+
+boxplot(tH$Kappa, tfH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Intervals", names=c("2 hours", "24 hours"))
+boxplot(tH$Kappa, tsH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Intervals", names=c("2 hours", "26 hours"))
+boxplot(tfH$Kappa, tsH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Intervals", names=c("24 hours", "26 hours"))
 
 
 #if you just want the background, do theme(panel.background = element_rect(colour = 'white')
@@ -312,3 +338,27 @@ PctError+ geom_point(size=4) + geom_errorbar(limits, width=0.1, size=1) +
     #  legend.text = element_text(size = 20),
     #  legend.key.size = unit(1.5, "cm")) 
 
+###############################################################################################################
+# Plot RMSE
+mydata<-read.csv("ALLresults_TEMP.csv", stringsAsFactors = FALSE)
+mydata<-mydata[mydata$Method%in%c("Double"),]
+mydata$Kappa<-as.numeric(mydata$Kappa)
+mydata$RMSE<-as.numeric(mydata$RMSE)
+
+acclm<-lm(mydata$Kappa ~ mydata$RMSE)
+summary(acclm)
+-0.69904 - (1.96*0.10678)
+-0.69904 + (1.96*0.10678)
+plot(mydata$Kappa ~ mydata$RMSE, ylim=c(0,1.5), xlab="RMSE", ylab="Kappa", pch=16)
+abline(1.05246, -0.699)
+text(.5,1.4, as.expression(~R^2~ "= 0.5576"))
+
+#Try it in GGplot
+rmseplot<-ggplot(mydata, aes(mydata$RMSE, mydata$Kappa, colour=mydata$colony, group=mydata$colony)) + geom_point()
+rmseplot
+
+boxplot(mydata$RMSE~mydata$Method1)
+head(mydata)
+
+daycomp<-read.csv("TwoDayResults_TEMP.csv")
+boxplot(daycomp$RMSE ~ daycomp$Method, xlab = RMSE,  ylab = "RMSE")

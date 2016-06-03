@@ -48,7 +48,23 @@ accslop1
 accslop4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\SSlope_f4.txt", sep=",", header=TRUE)
 accslop4
 
+accbln1<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Bluffn_f1.txt", sep="," , header=TRUE)
+accbln1
 
+accbln3<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Bluffn_f3.txt", sep=",", header=TRUE)
+accbln3
+
+accbln4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Bluffn_f4.txt", sep=",", header=TRUE)
+accbln4
+
+accbls1<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Bluffs_f1.txt", sep="," , header=TRUE)
+accbls1
+
+accbls3<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Bluffs_f3.txt", sep=",", header=TRUE)
+accbls3
+
+accbls4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Bluffs_f4.txt", sep=",", header=TRUE)
+accbls4
 
 ## B South Colony
 #Relative horizontal positional accuracy between B south f3 to f1
@@ -325,10 +341,131 @@ NSSDA
 Rslop14<-data.frame(RMSE, NSSDA, colony="South Slope", flights="1 and 3", stringsAsFactors =FALSE )
 
 
+## Bluff North colony
+
+#Relative horizontal positional accuracy between Soout Slope f3 to f1
+acc31<-accbln3
+acc31$xtest<-accbln1$X
+acc31$ytest<-accbln1$Y
+acc31$xdif<-acc31$X-acc31$xtest
+acc31$ydif<-acc31$Y-acc31$ytest
+acc31$xdif2<-(acc31$xdif)^2
+acc31$ydif2<-(acc31$ydif)^2
+acc31$x2y2<-acc31$xdif2+acc31$ydif2
+
+
+RMSE<-sqrt(sum(acc31$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rbln31<-data.frame(RMSE, NSSDA, colony="Bluff North", flights="1 and 2", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between South Slope f3 to f4
+acc34<-accbln3
+acc34$xtest<-accbln4$X
+acc34$ytest<-accbln4$Y
+acc34$xdif<-acc34$X-acc34$xtest
+acc34$ydif<-acc34$Y-acc34$ytest
+acc34$xdif2<-(acc34$xdif)^2
+acc34$ydif2<-(acc34$ydif)^2
+acc34$x2y2<-acc34$xdif2+acc34$ydif2
+
+
+RMSE<-sqrt(sum(acc34$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rbln34<-data.frame(RMSE, NSSDA, colony="Bluff North", flights="2 and 3", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between South Slope f1 to f4
+acc14<-accbln1
+acc14$xtest<-accbln4$X
+acc14$ytest<-accbln4$Y
+acc14$xdif<-acc14$X-acc14$xtest
+acc14$ydif<-acc14$Y-acc14$ytest
+acc14$xdif2<-(acc14$xdif)^2
+acc14$ydif2<-(acc14$ydif)^2
+acc14$x2y2<-acc14$xdif2+acc14$ydif2
+
+
+RMSE<-sqrt(sum(acc14$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rbln14<-data.frame(RMSE, NSSDA, colony="Bluff North", flights="1 and 3", stringsAsFactors =FALSE )
+
+
+## Bluff South colony
+
+#Relative horizontal positional accuracy between Soout Slope f3 to f1
+acc31<-accbls3
+acc31$xtest<-accbls1$X
+acc31$ytest<-accbls1$Y
+acc31$xdif<-acc31$X-acc31$xtest
+acc31$ydif<-acc31$Y-acc31$ytest
+acc31$xdif2<-(acc31$xdif)^2
+acc31$ydif2<-(acc31$ydif)^2
+acc31$x2y2<-acc31$xdif2+acc31$ydif2
+
+
+RMSE<-sqrt(sum(acc31$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rbls31<-data.frame(RMSE, NSSDA, colony="Bluff South", flights="1 and 2", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between South Slope f3 to f4
+acc34<-accbls3
+acc34$xtest<-accbls4$X
+acc34$ytest<-accbls4$Y
+acc34$xdif<-acc34$X-acc34$xtest
+acc34$ydif<-acc34$Y-acc34$ytest
+acc34$xdif2<-(acc34$xdif)^2
+acc34$ydif2<-(acc34$ydif)^2
+acc34$x2y2<-acc34$xdif2+acc34$ydif2
+
+
+RMSE<-sqrt(sum(acc34$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rbls34<-data.frame(RMSE, NSSDA, colony="Bluff South", flights="2 and 3", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between South Slope f1 to f4
+acc14<-accbls1
+acc14$xtest<-accbls4$X
+acc14$ytest<-accbls4$Y
+acc14$xdif<-acc14$X-acc14$xtest
+acc14$ydif<-acc14$Y-acc14$ytest
+acc14$xdif2<-(acc14$xdif)^2
+acc14$ydif2<-(acc14$ydif)^2
+acc14$x2y2<-acc14$xdif2+acc14$ydif2
+
+
+RMSE<-sqrt(sum(acc14$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rbls14<-data.frame(RMSE, NSSDA, colony="Bluff South", flights="1 and 3", stringsAsFactors =FALSE )
 
 
 
 Accuracy_Results<-rbind(Rbs31, Rbs34, Rbs14, Rbn31, Rbn34, Rbn14, Rc31, Rc34, Rc14, Rsad31, Rsad34, Rsad14, 
-                        Rslop31, Rslop34, Rslop14)
+                        Rslop31, Rslop34, Rslop14, Rbln31, Rbln34, Rbln14, Rbls31, Rbls34, Rbls14)
 Accuracy_Results
 write.csv(Accuracy_Results, "C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Relative_HP_Accuracy_Results.csv")
+
+## Let's take a look
+mydata<-read.csv("ALLresults_TEMP.csv", stringsAsFactors = FALSE)
+mydata<-mydata[mydata$Method%in%c("Double"),]
+mydata$Kappa<-as.numeric(mydata$Kappa)
+mydata$RMSE<-as.numeric(mydata$RMSE)
+
+acclm<-lm(mydata$Kappa ~ mydata$RMSE)
+summary(acclm)
+plot(mydata$Kappa ~ mydata$RMSE, ylim=c(0,1.5), xlab="RMSE", ylab="Kappa", pch=19)
+abline(1.05246, -0.699)
+text(.5,1.4, as.expression(~R^2~ "= 0.5576"))
+
+accglm<-glm(mydata$Kappa ~ mydata$RMSE, family = gaussian) # does this make any sense? 
+summary(accglm)

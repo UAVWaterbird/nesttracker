@@ -9,8 +9,8 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_BluffSouthSHIFT")
-b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffSouth")
+a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_BluffNorth")
+b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffNorth")
 
 
 
@@ -78,7 +78,7 @@ dev.off()
 ###Accuracy Assessment for Multitemporal Nearest Neighbor ###
 
 # Add observed values
-obs<- read.csv("TestData/Observed_Values_Bluffsouth.csv")
+obs<- read.csv("TestData/Observed_Values_Bluffnorth.csv")
 obs<-obs[ which(obs$Flight=="F3"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
@@ -148,4 +148,40 @@ ResultsAll
 #to export results
 write.csv(ResultsAll,"RecipResults.csv")
 
+#Try a Wilcoxon test for medians; similar results but 2 hour vs 26 hour not 
+## Data is not normal so I'm going to try a non parametric test
+daycomp<-read.csv("TwoDayResults_TEMP.csv")
+
+tH<-subset(daycomp, daycomp$Method == "2hours")
+tfH<-subset(daycomp, daycomp$Method == "24hours")
+tsH<-subset(daycomp, daycomp$Method == "26hours")
+
+wilcox.test(tfH$Kappa, tH$Kappa, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.99, exact=FALSE) # p = 0.3066
+wilcox.test(tH$Kappa, tsH$Kappa, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.99, exact=FALSE) #p = 0.01128
+wilcox.test(tsH$Kappa, tfH$Kappa, mu=0, alt="two.sided", paired=TRUE, exact=FALSE)                            #p = 0.7998
+
+
+par(mfrow=c(1,3))
+boxplot(tH$Kappa, tsH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Intervals", names=c("2 hours", "26 hours"))
+
+boxplot(tH$Kappa, tfH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Intervals", names=c("2 hours", "24 hours"))
+
+boxplot(tfH$Kappa, tsH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Intervals", names=c("24 hours", "26 hours"))
+
+# Let's do the same thing to see if 2 images are similar to three images
+## too circular - using 3 images as gold standard...
+#Need to be careful because spatial accuracy may throw off Kappa and make three day actually look worse. Might want to
+#Compare this by colonies with a certian level of positional accuracy
+
+#Test Bsouth first
+CompareResults<-read.csv("ALLresults_TEMP.csv", stringsAsFactors = FALSE)
+bscompare<-CompareResults[CompareResults$colony%in%c("bsouth"),]
+bscompareD<-bscompare[bscompare$Method%in%c("Double"),]
+bscompareD$Kappa<-sapply(bscompareD$Kappa, as.numeric)
+#bscompareD<-droplevels(bscompareD)
+bscompareT<-bscompare[bscompare$Method%in%c("Triple"),]
+bscompareT$Kappa<-sapply(bscompareT$Kappa, as.numeric)
+#bscompareT<-droplevels(bscompareT)
+
+wilcox.test(bscompareD$Kappa, bscompareT$Kappa, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.99, exact=FALSE)
 
