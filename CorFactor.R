@@ -8,9 +8,9 @@ corfacg
 
 
 
-plot(corfacg$nestimate~corfacg$Observed, ylim=c(0,2800), xlim=c(0,2800))
-abline(-361.87, 1.23, col="orange")
-abline(1,1, col="red")
+plot(corfacg$nestimate~corfacg$Observed, ylim=c(0,2800), xlim=c(0,2800), pch=19)
+abline(-361.87, 1.23, col="red")
+abline(1,1, col="black")
 
 #https://heuristically.wordpress.com/2011/09/28/paired-sample-t-test-in-r/
 corfacg$diff<-corfacg$nestimate - corfacg$Observed
@@ -70,7 +70,7 @@ qqline(cfmeans$diff)
 shapiro.test(cfmeans$diff) #nope, still not normal 
 
 #Compare ground to ground imagery
-plot(cfmeans$totalg~cfmeans$totali)
+plot(cfmeans$totalg~cfmeans$totali, pch=19)
 abline(109.6, 0.83)
 cfmeans$diffg<-cfmeans$totalg - cfmeans$totali
 hist(cfmeans$diffg)

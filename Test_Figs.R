@@ -5,6 +5,7 @@ library(ggplot2)
 library(plyr)
 library(reshape2)
 library(gridExtra)
+library(GISTools)
 
 setwd("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Nesttracker\\nesttracker")
 test<-read.csv("ALLresults_TEMP.csv")
@@ -362,3 +363,33 @@ head(mydata)
 
 daycomp<-read.csv("TwoDayResults_TEMP.csv")
 boxplot(daycomp$RMSE ~ daycomp$Method, xlab = RMSE,  ylab = "RMSE")
+
+
+
+
+##############################################################################################################
+# plot 
+
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_ARocksMush")
+
+pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
+                                   yrange=c(a@bbox[2,1], a@bbox[2,2])))
+pointsnn <- nndist(pointsa, k=1, by=marks(a))
+a$dist <- pointsnn
+
+# Set new column values to appropriate colours
+a$color[a$dist<0.7]="red"
+a$color[a$dist>0.7]="dark gray"
+plot(a, col=a$color, pch=20, cex=a$dist)
+north.arrow(285690, 4425609, km2ft(0.0009), col="dark gray", cex = 0.5)
+legend("topleft", pch=c(20,20), col=c("red","dark gray"), c("<0.7m", ">0.7m"), cex=.8, box.col="white")
+
+OR
+
+a$color[a$dist<0.7]="red"
+a$color[a$dist>0.7]="dark gray"
+plot(a, col=a$color, pch=20)
+north.arrow(285600, 4425609, km2ft(0.0009), col="dark gray", cex = 0.5)
+legend("topleft", pch=c(20,20), col=c("red","dark gray"), c("<0.7m", ">0.7m"), bty="o", cex=.8, box.col="white")
+
+

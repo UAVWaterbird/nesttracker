@@ -7,7 +7,7 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffSouth")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_ARocksMush")
 
 pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
                                    yrange=c(a@bbox[2,1], a@bbox[2,2])))
