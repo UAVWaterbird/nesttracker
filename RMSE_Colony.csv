@@ -1,0 +1,12 @@
+TSS,nestimate,colony,flight,Method,Method1,Method2,Observed,Method3,PctError,DisttoColony,Angle,RMSE,NSSDA,Per_Cover,maxRMSE,Mean_TSS
+1,811,c,f1f3f4,Triple,ThreeDay,na,812,UAS,0.123152709,na,na,na,na,9.769142358,0.412696202,0.999178982
+1,73,bsouth,f1f343,Triple,ThreeDay,na,73,UAS,0,na,na,na,na,2.363570578,0.351122099,1
+1,327,bnorth,f4f1f3,Triple,ThreeDay,na,327,UAS,0,na,na,na,na,10.36201074,0.194545787,1
+1,848,saddle,f4f3f1,Triple,ThreeDay,na,849,UAS,0.11778563,na,na,na,na,5.510920438,0.821961956,0.999214763
+0.953616786,1727,bluffn,f1f3f4,Triple,ThreeDay,na,1811,UAS,4.638321369,na,na,na,na,4.311072871,0.974895644,0.937921724
+0.985943775,491,bluffs,f1f4f3,Triple,ThreeDay,na,498,UAS,1.40562249,na,na,na,na,6.842224716,0.543934616,0.985943779
+1,666,arocksmush,f1f4f3,Triple,ThreeDay,na,666,UAS,0,na,na,na,na,18.27469731,0.249764788,1
+0.99839099,1241,amushfiss,f1f3f4,Triple,ThreeDay,na,1243,UAS,0.160901046,na,na,na,na,17.05412975,0.231670453,0.998391
+0.99719888,712,afisseast,f1f3f4,Triple,ThreeDay,na,714,UAS,0.280112045,na,na,na,na,12.42645257,0.204666815,0.997199
+1,617,d,f1f3f4,Triple,ThreeDay,na,617,UAS,0,na,na,na,na,11.38994314,0.364298635,1
+0.999017682,1017,sslope,f1f3f4,Triple,ThreeDay,na,1018,UAS,0.098231827,na,na,na,na,9.982454326,0.257637416,0.999018

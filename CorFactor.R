@@ -5,12 +5,24 @@ corfac<-gobs[gobs$Method3%in%c("ground","groundimage"),]
 corfac
 corfacg<-corfac[corfac$Method3%in%c("ground"),]
 corfacg
+corfaci<-corfac[corfac$Method3%in%c("groundimage"),]
 
 
 
-plot(corfacg$nestimate~corfacg$Observed, ylim=c(0,2800), xlim=c(0,2800), pch=19)
-abline(-361.87, 1.23, col="red")
+plot(corfacg$Observed~corfacg$nestimate, ylim=c(0,2800), xlim=c(0,2800), pch=19)
+abline(-337.88, 1.118, col="red")
 abline(1,1, col="black")
+
+ONregress<-lm(corfacg$Observed~corfacg$nestimate)
+plot(ONregress)
+summary(ONregress)
+
+corfacg$Angle<-as.numeric(corfacg$Angle)
+corfacg$DisttoColony<-as.numeric(corfacg$DisttoColony)
+plot(corfacg$PctError~corfacg$DisttoColony)
+abline(24.22, 0.02672)
+plot(corfacg$PctError~corfacg$Angle)
+abline(61.747, -1.878)
 
 #https://heuristically.wordpress.com/2011/09/28/paired-sample-t-test-in-r/
 corfacg$diff<-corfacg$nestimate - corfacg$Observed
@@ -24,9 +36,9 @@ qqline(corfacg$diff) #one outlier
 shapiro.test(corfacg$diff) #p-value = 0.004937, so reject null hypothesis that values are normally distributed
 #OK data is not normal, let's try a non parametric test?
 #paired
-wilcox.test(corfacg$nestimate, corfacg$Observed, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.95, exact=FALSE)
+wilcox.test(corfacg$Observed, corfacg$nestimate, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.95, exact=FALSE)
 #The 2 sided test p = 0.04455, true location shift is not equal to 0
-wilcox.test(corfacg$nestimate, corfacg$Observed, mu=0, alt="less", paired=TRUE, conf.int=T, conf.level=0.95, exact=FALSE)
+wilcox.test(corfacg$Observed, corfacg$nestimate, mu=0, alt="less", paired=TRUE, conf.int=T, conf.level=0.95, exact=FALSE)
 
 cflm<-lm(corfacg$Observed~corfacg$nestimate)
 plot(cflm)
@@ -70,8 +82,8 @@ qqline(cfmeans$diff)
 shapiro.test(cfmeans$diff) #nope, still not normal 
 
 #Compare ground to ground imagery
-plot(cfmeans$totalg~cfmeans$totali, pch=19)
-abline(109.6, 0.83)
+plot(cfmeans$totali~cfmeans$totalg, pch=19)
+abline(-40.93, 1.07)
 cfmeans$diffg<-cfmeans$totalg - cfmeans$totali
 hist(cfmeans$diffg)
 qqnorm(cfmeans$diffg)
@@ -79,4 +91,46 @@ qqline(cfmeans$diffg)
 shapiro.test(cfmeans$diffg) #data not normal because of bluff north outlier
 wilcox.test(cfmeans$totalg, cfmeans$totali, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.95, exact=FALSE)
 
+#linear model of nest estimates to ground image count
+plot(corfaci$nestimate ~ corfacg$nestimate)
 
+
+# Linear models of ground count ~ angle and distance and percent cover
+
+Anglelm<-lm(corfacg$PctError~corfacg$Angle)
+plot(Anglelm)
+summary(Anglelm)
+plot(corfacg$PctError~corfacg$Angle)
+abline(61.75, -1.88)
+
+
+
+# Percent Error using error means
+errors<-read.csv("Errormeans.csv")
+errorg<-errors[errors$Method%in%c("ground"),]
+errorg
+plot(errorg$mean ~ errorg$Per_Cov)
+abline(23.4, 1.2)
+Covlm2<-lm(errorg$mean ~ errorg$Per_Cov)
+summary(Covlm2)
+
+Alm<-lm(errorg$mean ~ errorg$Angle)
+summary(Alm)
+plot(errorg$mean ~ errorg$Angle)
+abline(63.4, -1.9718)
+
+CAlm<-lm(errorg$mean ~ errorg$Per_Cov + errorg$Angle)
+summary(CAlm)
+
+CAglm<-glm(errorg$mean ~ errorg$Per_Cov + errorg$Angle)
+summary(CAglm)
+
+# Percent Cover using All Data
+plot(corfacg$PctError~corfacg$Per_Cover)
+abline(25.89, 0.991)
+Covlm<-lm(corfacg$PctError~corfacg$Per_Cover)
+summary(Covlm)
+
+
+ADlm<-lm(corfacg$PctError~corfacg$Angle + corfacg$DisttoColony) 
+summary(ADlm)

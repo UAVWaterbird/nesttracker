@@ -16,9 +16,9 @@ test$order<-ifelse(test$Method=="Single",1,
               ifelse(test$Method=="Triple",3,"na")))
 as.factor(test$order)
 
-#observed <- test$Count[test$Count_Type=="Observed"]
-#test <- subset(test, Count_Type != "Observed")
-#test$Count_Type <- droplevels(test$Count_Type)
+observed <- test$Count[test$Count_Type=="Observed"]
+test <- subset(test, Count_Type != "Observed")
+test$Count_Type <- droplevels(test$Count_Type)
 
 boxplot(Count ~ Count_Type, data=test, ylim=c(400, 900))
 abline(h=observed, lty=2)
@@ -102,6 +102,11 @@ bluffs<-subset(test, test$colony=="bluffs")
 bluffn<-subset(test, test$colony=="bluffn")
 saddle<-subset(test, test$colony=="saddle")
 c<-subset(test, test$colony=="c")
+sslope<-subset(test, test$colony=="sslope")
+amf<-subset(test, test$colony=="amushfiss")
+afe<-subset(test, test$colony=="afisseast")
+arm<-subset(test, test$colony=="arocksmush")
+d<-subset(test, test$colony=="d")
 
 
 #bnorth strip
@@ -185,7 +190,7 @@ All_aerial
 test<-read.csv("ALLresults_TEMP.csv", stringsAsFactors = FALSE)
 test
 #remove na values 
-test<-subset(test[which(test$Kappa!="na"),])
+test<-subset(test[which(test$TSS!="na"),])
 #Order the Method by Single, Double, Triple instead of alphabetically
 test$order<-ifelse(test$Method=="Single",1,
                    ifelse(test$Method=="Double", 2,
@@ -193,30 +198,41 @@ test$order<-ifelse(test$Method=="Single",1,
 as.factor(test$order)
 test$Method <- factor(test$Method, levels = test$Method[order(test$order)])
   
+
+#TSS
+
+tssstats<-ggplot(test, aes(x=test$Method, y=as.numeric(test$TSS))) + 
+  geom_boxplot()  + ggtitle("TSS") +
+  labs(x="Method",y="TSS") +geom_jitter(shape=16, position=position_jitter(0.2))
+tssstats
+tssstats01<-tssstats + ylim(0,1)
+tssstats01
+
+
   #Kappa
 kappastats<-ggplot(test, aes(x=test$Method, y=as.numeric(test$Kappa))) + 
-  geom_boxplot()  + ggtitle("Kappa by Method") +
-  labs(x="Method",y="Kappa Score") +geom_jitter(shape=16, position=position_jitter(0.2))
+  geom_boxplot()  + ggtitle("Kappa") +
+  labs(x="Method",y="Kappa") +geom_jitter(shape=16, position=position_jitter(0.2))
 kappastats
 kappastats01<-kappastats + ylim(0,1)
 kappastats01
   #PCC
 PCCstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$PCC))) + 
-  geom_boxplot()  + ggtitle("Percent Correctly Classified by Method") +
+  geom_boxplot()  + ggtitle("Percent Correctly Classified") +
   labs(x="Method",y="PCC") +geom_jitter(shape=16, position=position_jitter(0.2))
 PCCstats
 PCCstats01<-PCCstats + ylim(0,1)
 PCCstats01
   #Sensitivity
 sensstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$sensitivity))) + 
-  geom_boxplot()  + ggtitle("Sensitivity by Method") +
+  geom_boxplot()  + ggtitle("Sensitivity") +
   labs(x="Method",y="Sensitivity") +geom_jitter(shape=16, position=position_jitter(0.2))
 sensstats
 sensstats01<-sensstats + ylim(0,1)
 sensstats01
   #Specificity
 specstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$specificity))) + 
-  geom_boxplot()  + ggtitle("Specificity by Method") +
+  geom_boxplot()  + ggtitle("Specificity") +
   labs(x="Method",y="Specificity") +geom_jitter(shape=16, position=position_jitter(0.2))
 specstats
 specstats01<-specstats + ylim(0,1)
@@ -224,21 +240,30 @@ specstats01
 
   #AUC
 aucstats<-ggplot(test, aes(x=test$Method, y= as.numeric(test$AUC))) + 
-  geom_boxplot()  + ggtitle("Area Under the Curve Scores by Method") +
+  geom_boxplot()  + ggtitle("Area Under the Curve Scores") +
   labs(x="Method",y="AUC") +geom_jitter(shape=16, position=position_jitter(0.2))
 aucstats
 aucstats01<-aucstats + ylim(0,1)
 aucstats01
 
 #Grid of all statistics
-grid.arrange(kappastats, PCCstats, sensstats, specstats, aucstats, ncol=2)
+grid.arrange(tssstats, kappastats, PCCstats, sensstats, specstats, aucstats, ncol=2)
 # Grid with ylim 0,1
-grid.arrange(kappastats01, PCCstats01, sensstats01, specstats01, aucstats01, ncol=2)
+grid.arrange(tssstats01, kappastats01, PCCstats01, sensstats01, specstats01, aucstats01, ncol=2)
 ######################################################################################################
 # Boxplots of stats for within day vs. across 2 days 
 
 test1<-test[test$Method1%in%c("SameDay","AcrossDay"),]
+test1$TSS<-as.numeric(test1$TSS)
 
+
+#TSS
+tssstats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$TSS))) + 
+  geom_boxplot()  + ggtitle("TSS") +
+  labs(x="Method",y="TSS") +geom_jitter(shape=16, position=position_jitter(0.2))
+tssstats1
+tssstats101<-tssstats1 + ylim(0,1)
+tssstats101
 
 #Kappa
 kappastats1<-ggplot(test1, aes(x=test1$Method1, y= as.numeric(test1$Kappa))) + 
@@ -279,9 +304,9 @@ aucstats101<-aucstats1 + ylim(0,1)
 aucstats101
 
 #Grid of all statistics
-grid.arrange(kappastats1, PCCstats1, sensstats1, specstats1, aucstats1, ncol=2)
+grid.arrange(tssstats1, kappastats1, PCCstats1, sensstats1, specstats1, aucstats1, ncol=2)
 # Grid when scaled to 0,1
-grid.arrange(kappastats101, PCCstats101, sensstats101, specstats101, aucstats101, ncol=2)
+grid.arrange(tssstats101, kappastats101, PCCstats101, sensstats101, specstats101, aucstats101, ncol=2)
 
 ###########################################################################################
 # Display count method (ground v UAS) by percent error
@@ -289,25 +314,27 @@ grid.arrange(kappastats101, PCCstats101, sensstats101, specstats101, aucstats101
 Errors<-read.csv("Errormeans.csv")
 errors1<-Errors[Errors$Method%in%c("ground"),]
 errors2<-Errors[Errors$Method%in%c("groundimage"),]
-errors3<-Errors[Errors$Method%in%c("UAS"),]
+#errors3<-Errors[Errors$Method%in%c("UAS"),]
 limits1 <- aes(ymax = errors1$mean + errors1$sd, ymin=errors1$mean - errors1$sd)
 limits2 <- aes(ymax = errors2$mean + errors2$sd, ymin=errors2$mean - errors2$sd)
-limits3 <- aes(ymax = errors3$mean + errors3$sd, ymin=errors3$mean - errors3$sd)
+#limits3 <- aes(ymax = errors3$mean + errors3$sd, ymin=errors3$mean - errors3$sd)
 
 PctError1 <- ggplot(errors1, aes(y=errors1$mean, x=errors1$Colony)) + geom_point(shape = 16, size=3) + 
   geom_errorbar(limits1, width = 0.2) + labs(title="Ground Count", 
-                                             x = "Colony", y = "Percent Error from Observed") + scale_y_continuous(limits = c(0,50))
+                                             x = "Colony", y = "Percent Error from Observed") + 
+  scale_y_continuous(limits = c(0,100))+theme(axis.text.x=element_text(angle=90, hjust=1,vjust=0.5))
 PctError1
 
 PctError2 <- ggplot(errors2, aes(y=errors2$mean, x=errors2$Colony)) + geom_point(shape = 15, size=3) + 
-  geom_errorbar(limits2, width = 0.2) + labs(title="Ground Image", x = "Colony", y = "Percent Error from Observed")+ scale_y_continuous(limits = c(0,50))
+  geom_errorbar(limits2, width = 0.2) + labs(title="Ground Image", x = "Colony", y = "Percent Error from Observed")+
+  scale_y_continuous(limits = c(0,100))+theme(axis.text.x=element_text(angle=90, hjust=1,vjust=0.5))
 PctError2
 
-PctError3 <- ggplot(errors3, aes(y=errors3$mean, x=errors3$Colony)) + geom_point(shape = 18, size=3) + 
-  geom_errorbar(limits3, width = 0.2) + labs(title="UAS", x = "Colony", y = "Percent Error from Observed") + scale_y_continuous(limits = c(0,50))
-PctError3
+#PctError3 <- ggplot(errors3, aes(y=errors3$mean, x=errors3$Colony)) + geom_point(shape = 18, size=3) + 
+ # geom_errorbar(limits3, width = 0.2) + labs(title="UAS", x = "Colony", y = "Percent Error from Observed") + scale_y_continuous(limits = c(0,50))
+#PctError3
 
-grid.arrange(PctError1, PctError2, PctError3, ncol=3)
+grid.arrange(PctError1, PctError2, ncol=2)
 #############################################################################################
 
 #Boxplots to compare Kappa means by flight intervals
@@ -320,9 +347,9 @@ tsH<-subset(daycomp, daycomp$Method == "26hours")
 
 par(mfrow=c(1,3))
 
-boxplot(tH$Kappa, tfH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Intervals", names=c("2 hours", "24 hours"))
-boxplot(tH$Kappa, tsH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Intervals", names=c("2 hours", "26 hours"))
-boxplot(tfH$Kappa, tsH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Intervals", names=c("24 hours", "26 hours"))
+boxplot(tH$TSS, tfH$TSS, ylim=c(0,1), ylab = "TSS", xlab="Flight Intervals", names=c("2 hours", "24 hours"))
+boxplot(tH$TSS, tsH$TSS, ylim=c(0,1), ylab = "TSS", xlab="Flight Intervals", names=c("2 hours", "26 hours"))
+boxplot(tfH$TSS, tsH$TSS, ylim=c(0,1), ylab = "TSS", xlab="Flight Intervals", names=c("24 hours", "26 hours"))
 
 
 #if you just want the background, do theme(panel.background = element_rect(colour = 'white')
@@ -341,18 +368,19 @@ boxplot(tfH$Kappa, tsH$Kappa, ylim=c(0,1), ylab = "Kappa", xlab="Flight Interval
 
 ###############################################################################################################
 # Plot RMSE
-mydata<-read.csv("ALLresults_TEMP.csv", stringsAsFactors = FALSE)
-mydata<-mydata[mydata$Method%in%c("Double"),]
-mydata$Kappa<-as.numeric(mydata$Kappa)
-mydata$RMSE<-as.numeric(mydata$RMSE)
+mydata<-read.csv("RMSE_Colony.csv", stringsAsFactors = FALSE)
+#mydata<-mydata[mydata$Method%in%c("Triple"),]
+mydata$TSS<-as.numeric(mydata$Mean_TSS)
+#mydata$Kappa<-as.numeric(mydata$Kappa)
+mydata$maxRMSE<-as.numeric(mydata$maxRMSE)
 
-acclm<-lm(mydata$Kappa ~ mydata$RMSE)
+acclm<-lm(mydata$TSS ~ mydata$maxRMSE)
 summary(acclm)
--0.69904 - (1.96*0.10678)
--0.69904 + (1.96*0.10678)
-plot(mydata$Kappa ~ mydata$RMSE, ylim=c(0,1.5), xlab="RMSE", ylab="Kappa", pch=16)
-abline(1.05246, -0.699)
-text(.5,1.4, as.expression(~R^2~ "= 0.5576"))
+-0.052193 - (1.96*0.006873)
+-0.052193 + (1.96*0.006873)
+plot(mydata$TSS ~ mydata$maxRMSE, ylim=c(0.9,1.1), xlab="RMSE", ylab="TSS", pch=16)
+abline(1.014303, -0.052193)
+text(0.9,1.09, as.expression(~R^2~ "= 0.5397"))
 
 #Try it in GGplot
 rmseplot<-ggplot(mydata, aes(mydata$RMSE, mydata$Kappa, colour=mydata$colony, group=mydata$colony)) + geom_point()
@@ -391,5 +419,6 @@ a$color[a$dist>0.7]="dark gray"
 plot(a, col=a$color, pch=20)
 north.arrow(285600, 4425609, km2ft(0.0009), col="dark gray", cex = 0.5)
 legend("topleft", pch=c(20,20), col=c("red","dark gray"), c("<0.7m", ">0.7m"), bty="o", cex=.8, box.col="white")
+
 
 

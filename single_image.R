@@ -7,7 +7,9 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_ARocksMush")
+a <- readOGR(dsn="./TestData", layer="AWPE_F1_400_SSlopeSHIFT")
+a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_SSlope")
+a <- readOGR(dsn="./TestData", layer="AWPE_F4_300_SSlopeSHIFT")
 
 pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]), 
                                    yrange=c(a@bbox[2,1], a@bbox[2,2])))
@@ -16,9 +18,9 @@ pointsa <- as.ppp(a@coords, W=owin(xrange=c(a@bbox[1,1], a@bbox[1,2]),
 ###a Stienen diagram, just for fun
 stienen(pointsa)
 # plot nearest neighbour links
-pointwhich<-nnwhich(pointsa)
-Z<- pointsa[pointwhich]
-arrows(pointsa$x, pointsa$y, Z$x, Z$y, angle=15, length=0.01,col="red")
+#pointwhich<-nnwhich(pointsa)
+#Z<- pointsa[pointwhich]
+#arrows(pointsa$x, pointsa$y, Z$x, Z$y, angle=15, length=0.01,col="red")
 
 
 #calculate the nearest neighbor within the shapefile 
@@ -30,7 +32,7 @@ a$nnid2 <- a$UFID[nnwhich(pointsa)]
 
 #sort the points by nn distance
 # but first add observed values before sorting
-obs<- read.csv("TestData/Observed_Values_BluffSouth.csv")
+obs<- read.csv("TestData/Observed_Values_SSlope.csv")
 obs<-obs[ which(obs$Flight=="F4"), ] 
 a$observed <- obs$Observed
 head(a)
@@ -65,7 +67,7 @@ abline(v=qts[2],col="red")
 abline(v=lit[1], col="blue")
 abline(v=lit[2], col="blue")
 
-# Method 3: threshold based off observed values
+# Method 3: threshold based off observed values??
 
 ## Now using the BS reciprocal code, pull out "attending mates" and outliers
 for(i in 1:nrow(asort)){
@@ -111,9 +113,14 @@ presence.absence.summary(f)
 auc.roc.plot(f)
 #dev.off()
 
-#Rf1bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f1", stringsAsFactors =FALSE )
-#Rf3bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f3", stringsAsFactors =FALSE )
-Rf4bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f4", stringsAsFactors =FALSE )
+#Rf1ss<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="sslope", flight="f1", stringsAsFactors =FALSE )
+#Rf3ss<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="sslope", flight="f3", stringsAsFactors =FALSE )
+Rf4ss<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="sslope", flight="f4", stringsAsFactors =FALSE )
+
+Results2<-rbind(Rf1arm, Rf3arm, Rf4arm, Rf1afe, Rf3afe, Rf4afe, Rf1amf, Rf3amf, Rf4amf, Rf1d, Rf3d, Rf4d, Rf1ss, Rf3ss, Rf4ss)
+Results2
+write.csv(Results2, "SNN_Results_2.csv")
+
 
 ResultsMthd1<-rbind(Rf1c, Rf3c, Rf4c, Rf1bsouth, Rf3bsouth, Rf4bsouth, Rf1bnorth, Rf3north, 
                     Rf4north, Rf1saddle, Rf3saddle, Rf4saddle, Rf1bluffn, Rf3bluffn, Rf4bluffn, 

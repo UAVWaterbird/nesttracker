@@ -66,6 +66,44 @@ accbls3
 accbls4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Bluffs_f4.txt", sep=",", header=TRUE)
 accbls4
 
+accafe1<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\AFissEast_f1.txt", sep="," , header=TRUE)
+accafe1
+
+accafe3<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\AFissEast_f3.txt", sep=",", header=TRUE)
+accafe3
+
+accafe4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\AFissEast_f4.txt", sep=",", header=TRUE)
+accafe4
+
+accarm1<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\ARocksMush_f1.txt", sep="," , header=TRUE)
+accarm1
+
+accarm3<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\ARocksMush_f3.txt", sep=",", header=TRUE)
+accarm3
+
+accarm4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\ARocksMush_f4.txt", sep=",", header=TRUE)
+accarm4
+
+
+accamf1<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\AMushFiss_f1.txt", sep="," , header=TRUE)
+accamf1
+
+accamf3<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\AMushFiss_f3.txt", sep=",", header=TRUE)
+accamf3
+
+accamf4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\AMushFiss_f4.txt", sep=",", header=TRUE)
+accamf4
+
+
+accd3<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\D_f3.txt", sep=",", header=TRUE)
+accd3
+
+accd1<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\D_f1.txt", sep=",", header=TRUE)
+accd1
+
+accd4<-read.table("C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\D_f4.txt", sep=",", header=TRUE)
+accd4
+
 ## B South Colony
 #Relative horizontal positional accuracy between B south f3 to f1
 acc31<-accbsouth3
@@ -450,8 +488,236 @@ Rbls14<-data.frame(RMSE, NSSDA, colony="Bluff South", flights="1 and 3", strings
 
 
 
+
+
+
+## A Fissure to East Colony
+#Relative horizontal positional accuracy between afe f3 to f1
+acc31<-accafe3
+acc31$xtest<-accafe1$X
+acc31$ytest<-accafe1$Y
+acc31$xdif<-acc31$X-acc31$xtest
+acc31$ydif<-acc31$Y-acc31$ytest
+acc31$xdif2<-(acc31$xdif)^2
+acc31$ydif2<-(acc31$ydif)^2
+acc31$x2y2<-acc31$xdif2+acc31$ydif2
+
+
+RMSE<-sqrt(sum(acc31$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rafe31<-data.frame(RMSE, NSSDA, colony="AFissEast", flights="1 and 2", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between afe f3 to f4
+acc34<-accafe3
+acc34$xtest<-accafe4$X
+acc34$ytest<-accafe4$Y
+acc34$xdif<-acc34$X-acc34$xtest
+acc34$ydif<-acc34$Y-acc34$ytest
+acc34$xdif2<-(acc34$xdif)^2
+acc34$ydif2<-(acc34$ydif)^2
+acc34$x2y2<-acc34$xdif2+acc34$ydif2
+
+
+RMSE<-sqrt(sum(acc34$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rafe34<-data.frame(RMSE, NSSDA, colony="AFissEast", flights="2 and 3", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between afe f1 to f4
+acc14<-accafe1
+acc14$xtest<-accafe4$X
+acc14$ytest<-accafe4$Y
+acc14$xdif<-acc14$X-acc14$xtest
+acc14$ydif<-acc14$Y-acc14$ytest
+acc14$xdif2<-(acc14$xdif)^2
+acc14$ydif2<-(acc14$ydif)^2
+acc14$x2y2<-acc14$xdif2+acc14$ydif2
+
+
+RMSE<-sqrt(sum(acc14$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rafe14<-data.frame(RMSE, NSSDA, colony="AFissEast", flights="1 and 3", stringsAsFactors =FALSE )
+
+
+
+
+## A Rocks to Mushroom Colony
+#Relative horizontal positional accuracy between afe f3 to f1
+acc31<-accarm3
+acc31$xtest<-accarm1$X
+acc31$ytest<-accarm1$Y
+acc31$xdif<-acc31$X-acc31$xtest
+acc31$ydif<-acc31$Y-acc31$ytest
+acc31$xdif2<-(acc31$xdif)^2
+acc31$ydif2<-(acc31$ydif)^2
+acc31$x2y2<-acc31$xdif2+acc31$ydif2
+
+
+RMSE<-sqrt(sum(acc31$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rarm31<-data.frame(RMSE, NSSDA, colony="ARocksMush", flights="1 and 2", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between afe f3 to f4
+acc34<-accarm3
+acc34$xtest<-accarm4$X
+acc34$ytest<-accarm4$Y
+acc34$xdif<-acc34$X-acc34$xtest
+acc34$ydif<-acc34$Y-acc34$ytest
+acc34$xdif2<-(acc34$xdif)^2
+acc34$ydif2<-(acc34$ydif)^2
+acc34$x2y2<-acc34$xdif2+acc34$ydif2
+
+
+RMSE<-sqrt(sum(acc34$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rarm34<-data.frame(RMSE, NSSDA, colony="ARocksMush", flights="2 and 3", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between afe f1 to f4
+acc14<-accarm1
+acc14$xtest<-accarm4$X
+acc14$ytest<-accarm4$Y
+acc14$xdif<-acc14$X-acc14$xtest
+acc14$ydif<-acc14$Y-acc14$ytest
+acc14$xdif2<-(acc14$xdif)^2
+acc14$ydif2<-(acc14$ydif)^2
+acc14$x2y2<-acc14$xdif2+acc14$ydif2
+
+
+RMSE<-sqrt(sum(acc14$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rarm14<-data.frame(RMSE, NSSDA, colony="ARocksMush", flights="1 and 3", stringsAsFactors =FALSE )
+
+
+
+
+
+## A Mushroom to Fissure Colony
+#Relative horizontal positional accuracy between afe f3 to f1
+acc31<-accamf3
+acc31$xtest<-accamf1$X
+acc31$ytest<-accamf1$Y
+acc31$xdif<-acc31$X-acc31$xtest
+acc31$ydif<-acc31$Y-acc31$ytest
+acc31$xdif2<-(acc31$xdif)^2
+acc31$ydif2<-(acc31$ydif)^2
+acc31$x2y2<-acc31$xdif2+acc31$ydif2
+
+
+RMSE<-sqrt(sum(acc31$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Ramf31<-data.frame(RMSE, NSSDA, colony="AMushFiss", flights="1 and 2", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between afe f3 to f4
+acc34<-accamf3
+acc34$xtest<-accamf4$X
+acc34$ytest<-accamf4$Y
+acc34$xdif<-acc34$X-acc34$xtest
+acc34$ydif<-acc34$Y-acc34$ytest
+acc34$xdif2<-(acc34$xdif)^2
+acc34$ydif2<-(acc34$ydif)^2
+acc34$x2y2<-acc34$xdif2+acc34$ydif2
+
+
+RMSE<-sqrt(sum(acc34$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Ramf34<-data.frame(RMSE, NSSDA, colony="AMushFiss", flights="2 and 3", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between afe f1 to f4
+acc14<-accamf1
+acc14$xtest<-accamf4$X
+acc14$ytest<-accamf4$Y
+acc14$xdif<-acc14$X-acc14$xtest
+acc14$ydif<-acc14$Y-acc14$ytest
+acc14$xdif2<-(acc14$xdif)^2
+acc14$ydif2<-(acc14$ydif)^2
+acc14$x2y2<-acc14$xdif2+acc14$ydif2
+
+
+RMSE<-sqrt(sum(acc14$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Ramf14<-data.frame(RMSE, NSSDA, colony="AMushFiss", flights="1 and 3", stringsAsFactors =FALSE )
+
+
+
+
+
+## D colony
+
+#Relative horizontal positional accuracy between C f3 to f1
+acc31<-accd3
+acc31$xtest<-accd1$X
+acc31$ytest<-accd1$Y
+acc31$xdif<-acc31$X-acc31$xtest
+acc31$ydif<-acc31$Y-acc31$ytest
+acc31$xdif2<-(acc31$xdif)^2
+acc31$ydif2<-(acc31$ydif)^2
+acc31$x2y2<-acc31$xdif2+acc31$ydif2
+
+
+RMSE<-sqrt(sum(acc31$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rd31<-data.frame(RMSE, NSSDA, colony="D", flights="1 and 2", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between C f3 to f4
+acc34<-accd3
+acc34$xtest<-accd4$X
+acc34$ytest<-accd4$Y
+acc34$xdif<-acc34$X-acc34$xtest
+acc34$ydif<-acc34$Y-acc34$ytest
+acc34$xdif2<-(acc34$xdif)^2
+acc34$ydif2<-(acc34$ydif)^2
+acc34$x2y2<-acc34$xdif2+acc34$ydif2
+
+
+RMSE<-sqrt(sum(acc34$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rd34<-data.frame(RMSE, NSSDA, colony="D", flights="2 and 3", stringsAsFactors =FALSE )
+
+#Relative horizontal positional accuracy between C f1 to f4
+acc14<-accd1
+acc14$xtest<-accd4$X
+acc14$ytest<-accd4$Y
+acc14$xdif<-acc14$X-acc14$xtest
+acc14$ydif<-acc14$Y-acc14$ytest
+acc14$xdif2<-(acc14$xdif)^2
+acc14$ydif2<-(acc14$ydif)^2
+acc14$x2y2<-acc14$xdif2+acc14$ydif2
+
+
+RMSE<-sqrt(sum(acc14$x2y2)/20)
+NSSDA<-RMSE*1.7308
+RMSE
+NSSDA
+Rd14<-data.frame(RMSE, NSSDA, colony="D", flights="1 and 3", stringsAsFactors =FALSE )
+
+
+
+
+
 Accuracy_Results<-rbind(Rbs31, Rbs34, Rbs14, Rbn31, Rbn34, Rbn14, Rc31, Rc34, Rc14, Rsad31, Rsad34, Rsad14, 
-                        Rslop31, Rslop34, Rslop14, Rbln31, Rbln34, Rbln14, Rbls31, Rbls34, Rbls14)
+                        Rslop31, Rslop34, Rslop14, Rbln31, Rbln34, Rbln14, Rbls31, Rbls34, Rbls14, Rafe31, Rafe34, Rafe14, 
+                        Rarm31, Rarm34, Rarm14, Ramf31, Ramf34, Ramf14, Rd31, Rd34, Rd14)
 Accuracy_Results
 write.csv(Accuracy_Results, "C:\\Users\\sd1249\\Documents\\Sharon\\Thesis\\Anaho_UAS\\Data\\Accuracy_Positional\\Relative_HP_Accuracy_Results.csv")
 
@@ -469,3 +735,5 @@ text(.5,1.4, as.expression(~R^2~ "= 0.5576"))
 
 accglm<-glm(mydata$Kappa ~ mydata$RMSE, family = gaussian) # does this make any sense? 
 summary(accglm)
+
+

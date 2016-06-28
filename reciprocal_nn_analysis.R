@@ -9,8 +9,9 @@ library(rgdal)
 library(PresenceAbsence)
 
 #Read the shapefiles
-a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_BluffNorth")
-b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_BluffNorth")
+a <- readOGR(dsn="./TestData", layer="AWPE_F1_400_D")
+a <- readOGR(dsn="./TestData", layer="AWPE_F3_400_D")
+b <- readOGR(dsn="./TestData", layer="AWPE_F4_300_DSHIFT")
 
 
 
@@ -78,13 +79,13 @@ dev.off()
 ###Accuracy Assessment for Multitemporal Nearest Neighbor ###
 
 # Add observed values
-obs<- read.csv("TestData/Observed_Values_Bluffnorth.csv")
+obs<- read.csv("TestData/Observed_Values_D.csv")
 obs<-obs[ which(obs$Flight=="F3"), ]        #### CHANGE FLIGHT NUMBER HERE (FROM FLIGHT)
 obsvalue<-obs$Observed
 a$observed<-obsvalue
 head(a)  ## this names the column "observed.observed" , need to figure out why is adding the ".observed"
 
-write.csv(a, "f1f4_recip_saddle.csv")                   #### CHANGE FILE NAME
+write.csv(a, "f1f3_recip_d.csv")                   #### CHANGE FILE NAME
 
 ### Here is where I want to create a shapefile of only birds that I think are actively nesting 
 ### e.g., writeOGR(a, "BSouthnest1", driver="ESRI shapefile")
@@ -111,12 +112,18 @@ auc.roc.plot(f)
 dev.off()
 
 #accresults<-data.frame("kappa"=character(0), "kappa.sd"=character(0), "sensitivity"=character(0),"sensitivity.sd"=character(0), "specificity"=character(0), "specificity.sd"=character(0), "auc"=character(0),"auc.sd"=character(0), "colony"=character(0), "flight"=character(0), stringsAsFactors = FALSE) #Only use this line for first series
-#Resultsf13bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f1f3", stringsAsFactors =FALSE )
-#Resultsf14bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f1f4", stringsAsFactors =FALSE )
-#Resultsf41bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f4f1", stringsAsFactors =FALSE )
-#Resultsf43bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f4f3", stringsAsFactors =FALSE )
-#Resultsf31bluffs<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f3f1", stringsAsFactors =FALSE )
-Resultsf34bluffn<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="bluffs", flight="f3f4", stringsAsFactors =FALSE )
+#Rf13arm<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="arocksmush", flight="f1f3", stringsAsFactors =FALSE )
+#Rf14arm<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="arocksmush", flight="f1f4", stringsAsFactors =FALSE )
+#Rf41arm<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="arocksmush", flight="f4f1", stringsAsFactors =FALSE )
+#Rf43arm<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="arocksmush", flight="f4f3", stringsAsFactors =FALSE )
+#Rf31arm<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="arocksmush", flight="f3f1", stringsAsFactors =FALSE )
+#Rf34arm<-data.frame(PCC, kappa, sensitivity, specificity, auc, nestimate, colony="arocksmush", flight="f3f4", stringsAsFactors =FALSE )
+
+RR2<-rbind(Rf13d, Rf14d, Rf41d, Rf43d, Rf31d, Rf34d, Rf13ss, Rf14ss, Rf41ss, Rf43ss, Rf31ss, Rf34ss, 
+           Rf13amf, Rf14amf, Rf41amf, Rf43amf, Rf31amf, Rf34amf, Rf13afe, Rf14afe, Rf41afe, Rf43afe, Rf31afe, Rf34afe, 
+           Rf13arm, Rf14arm, Rf41arm, Rf43arm, Rf31arm, Rf34arm)
+RR2
+write.csv(RR2, "RecipResults2.csv")
 
 ResultsAllFIX<-rbind(Resultsf31c, Resultsf13c, Resultsf43c, Resultsf41c, Resultsf14c, Resultsf34c, 
                      Resultsf13bsouth, Resultsf14bsouth, Resultsf41bsouth, Resultsf43bsouth, Resultsf31bsouth, 
@@ -156,9 +163,9 @@ tH<-subset(daycomp, daycomp$Method == "2hours")
 tfH<-subset(daycomp, daycomp$Method == "24hours")
 tsH<-subset(daycomp, daycomp$Method == "26hours")
 
-wilcox.test(tfH$Kappa, tH$Kappa, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.99, exact=FALSE) # p = 0.3066
-wilcox.test(tH$Kappa, tsH$Kappa, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.99, exact=FALSE) #p = 0.01128
-wilcox.test(tsH$Kappa, tfH$Kappa, mu=0, alt="two.sided", paired=TRUE, exact=FALSE)                            #p = 0.7998
+wilcox.test(tfH$TSS, tH$TSS, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.99, exact=FALSE) # p = 0.1176
+wilcox.test(tH$TSS, tsH$TSS, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.99, exact=FALSE) #p = 0.01661
+wilcox.test(tsH$TSS, tfH$TSS, mu=0, alt="two.sided", paired=TRUE, conf.int=T, conf.level=0.99,exact=FALSE) #p = 0.05703
 
 
 par(mfrow=c(1,3))
